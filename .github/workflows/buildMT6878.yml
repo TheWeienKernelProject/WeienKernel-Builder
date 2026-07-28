@@ -60,8 +60,8 @@ jobs:
       - name: Include DroidSpaces
         run: |
               cd mt6878
-              # curl -Lo patch-for-below-6.12.patch https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch || exit 1
-              # patch -p1 < patch-for-below-6.12.patch
+              curl -Lo patch-for-below-6.12.patch https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch || exit 1
+              patch -p1 < patch-for-below-6.12.patch
 
       - name: Build Kernel Image
         run: |
@@ -74,8 +74,8 @@ jobs:
           export CROSS_COMPILE=aarch64-linux-gnu-
             
           cd mt6878
-          make mrproper || true
-          make turbo6x-mt6878_defconfig
+          # make mrproper || true
+          make turbo6x-mt6878_defconfig droidspaces_defconfig
           make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
 
       - name: Upload Build Summary 
