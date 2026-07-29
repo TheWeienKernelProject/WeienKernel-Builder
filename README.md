@@ -12,16 +12,16 @@ TheWeienKernelProject编译内核使用Workflow
 
 
 RedmiNote9Pro(gauguin)
-github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_gauguin
+github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_gauguin/releases
 
 
 Mi8(Dipper)
-github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_sdm845
+github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_sdm845/releases
 
 
 RedmiNote10Pro(chopin)
-github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_chopin
+github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_chopin/releases
 
 
 一加Turbo6X(turbo6X）
-github.com/TheWeienKernelProject/android_WeienKernel_oneplus_mt6878
+github.com/TheWeienKernelProject/android_WeienKernel_oneplus_mt6878/releases
