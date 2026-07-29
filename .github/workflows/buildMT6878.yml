@@ -1,4 +1,4 @@
-name: Compile Kernel MT6878
+name: Compile Kernel OnePlusTurbo6X
 
 on:
   workflow_dispatch:
