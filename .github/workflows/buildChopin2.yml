@@ -409,7 +409,7 @@ jobs:
 
           fi
 
-           sed -i '/CONFIG_KSU_MANUAL_HOOK=y/d' out/.config
+             echo "CONFIG_KSU_MANUAL_HOOK=y" >> out/.config
            
           if [[ "${{ inputs.enable_tmpfs-xattr }}" == "true" ]]; then
 
