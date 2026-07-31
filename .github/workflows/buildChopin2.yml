@@ -342,7 +342,7 @@ jobs:
               sed -i '170s/error/warning/g' drivers/kernelsu/Kbuild
               sed -i '81s/-dirty//g' drivers/kernelsu/Kbuild
 
-              curl -Lo susfs.patch https://gitlab.com/simonpunk/susfs4ksu/-/raw/kernel-4.14/kernel_patches/50_add_susfs_in_kernel-4.14.patch
+              cp ../susfs.patch susfs.patch
               patch -p1 < susfs.patch
           touch ./.scmversion
          
