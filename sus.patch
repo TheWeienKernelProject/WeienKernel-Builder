@@ -1116,16 +1116,6 @@ diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
 index 1347939..a01362f 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
-@@ -20,6 +20,9 @@
- #include <linux/uaccess.h>
- #include <linux/mm_inline.h>
- #include <linux/ctype.h>
-+#if defined(CONFIG_KSU_SUSFS_SUS_KSTAT) || defined(CONFIG_KSU_SUSFS_SUS_MAP) || defined(CONFIG_KSU_SUSFS_OPEN_REDIRECT)
-+#include <linux/susfs_def.h>
-+#endif // #if defined(CONFIG_KSU_SUSFS_SUS_KSTAT) || defined(CONFIG_KSU_SUSFS_SUS_MAP) || defined(CONFIG_KSU_SUSFS_OPEN_REDIRECT)
- 
- #include <asm/elf.h>
- #include <asm/tlb.h>
 @@ -349,6 +352,14 @@ static void show_vma_header_prefix(struct seq_file *m,
  		   MAJOR(dev), MINOR(dev), ino);
  }
@@ -1190,31 +1180,6 @@ index 1347939..a01362f 100644
 +#endif
  
  	memset(&mss, 0, sizeof(mss));
-@@ -1618,6 +1671,9 @@ static ssize_t pagemap_read(struct file *file, char __user *buf,
- 	while (count && (start_vaddr < end_vaddr)) {
- 		int len;
- 		unsigned long end;
-+#ifdef CONFIG_KSU_SUSFS_SUS_MAP
-+		struct vm_area_struct *vma;
-+#endif // #ifdef CONFIG_KSU_SUSFS_SUS_MAP
- 
- 		pm.pos = 0;
- 		end = (start_vaddr + PAGEMAP_WALK_SIZE) & PAGEMAP_WALK_MASK;
-@@ -1625,7 +1681,15 @@ static ssize_t pagemap_read(struct file *file, char __user *buf,
- 		if (end < start_vaddr || end > end_vaddr)
- 			end = end_vaddr;
- 		down_read(&mm->mmap_sem);
-+#ifdef CONFIG_KSU_SUSFS_SUS_MAP
-+		vma = find_vma(mm, start_vaddr);
-+		if (vma && vma->vm_file && SUSFS_IS_INODE_SUS_MAP(file_inode(vma->vm_file)))
-+			goto bypass_orig_flow;
-+#endif // #ifdef CONFIG_KSU_SUSFS_SUS_MAP
- 		ret = walk_page_range(start_vaddr, end, &pagemap_walk);
-+#ifdef CONFIG_KSU_SUSFS_SUS_MAP
-+bypass_orig_flow:
-+#endif // #ifdef CONFIG_KSU_SUSFS_SUS_MAP
- 		up_read(&mm->mmap_sem);
- 		start_vaddr = end;
  
 diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
 index b859aae..f4a5add 100644
