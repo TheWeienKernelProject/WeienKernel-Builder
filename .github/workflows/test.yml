@@ -2,8 +2,21 @@ name: test patch can use in chopin
 
 on:
   workflow_dispatch:
-  - name: Clone Kernel Source
+jobs:
+  Test:
+    env:
+        GH_TOKEN: ${{ github.token }}
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      actions: read
+      checks: read
+    steps:
+      - uses: actions/checkout@v6
+      
+      - name: Clone Kernel Source
         run: |
-          git clone https://github.com/liuweien339-sys/android_kernel_xiaomi_chopin --depth=1 chopin -b U
-  - name: Patch
-  curl -Lo inline.sh https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/susfs_patch_to_4.14.patch
+             git clone https://github.com/liuweien339-sys/android_kernel_xiaomi_chopin --depth=1 chopin -b U
+      - name: Patch
+        run: |
+             curl -Lo inline.sh https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/susfs_patch_to_4.14.patch
