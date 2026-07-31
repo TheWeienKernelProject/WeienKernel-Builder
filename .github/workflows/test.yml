@@ -20,3 +20,4 @@ jobs:
       - name: Patch
         run: |
              curl -Lo inline.sh https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/susfs_patch_to_4.14.patch
+             patch -p1 < susfs.patch
