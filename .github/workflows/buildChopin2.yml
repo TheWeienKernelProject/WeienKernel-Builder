@@ -1,4 +1,4 @@
-name: Compile Kernel (Chopin)
+name: Compile Kernel (Chopin2)
 
 on:
   workflow_dispatch:
@@ -341,6 +341,9 @@ jobs:
               sed -i '/^if {$/,/^fi$/d' scripts/setlocalversion
               sed -i '170s/error/warning/g' drivers/kernelsu/Kbuild
               sed -i '81s/-dirty//g' drivers/kernelsu/Kbuild
+
+              curl -Lo susfs.patch https://gitlab.com/simonpunk/susfs4ksu/-/raw/kernel-4.14/kernel_patches/50_add_susfs_in_kernel-4.14.patch
+              patch -p1 > susfs.patch
           touch ./.scmversion
          
       - name: Make Kernel Configs
@@ -408,8 +411,6 @@ jobs:
             esac
 
           fi
-
-             echo "CONFIG_KSU_MANUAL_HOOK=y" >> out/.config
            
           if [[ "${{ inputs.enable_tmpfs-xattr }}" == "true" ]]; then
 
