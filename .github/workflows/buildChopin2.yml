@@ -342,10 +342,10 @@ jobs:
               sed -i '170s/error/warning/g' drivers/kernelsu/Kbuild
               sed -i '81s/-dirty//g' drivers/kernelsu/Kbuild
 
-              cp ../susfs.patch susfs.patch
+              cp ../sus.patch sus.patch
               curl -Lo inline.sh https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh
               bash inline.sh
-              patch -p1 < susfs.patch
+              patch -p1 < sus.patch
           touch ./.scmversion
          
       - name: Make Kernel Configs
