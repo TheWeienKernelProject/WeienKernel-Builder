@@ -221,9 +221,9 @@ jobs:
         run: |
               curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-qpr3-release/clang-r487747c.tar.gz
 
-          mkdir -p toolchains/clang-r487747c 
+              mkdir -p toolchains/clang-r487747c 
           
-          tar -xf "clang-r487747c .tar.gz" -C "toolchains/clang-r487747c " || exit 1
+              tar -xf "clang-r487747c .tar.gz" -C "toolchains/clang-r487747c " || exit 1
 
       - name: Include goodies
         run: |
