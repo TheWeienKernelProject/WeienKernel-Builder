@@ -225,6 +225,10 @@ jobs:
           
               tar -xf "clang-r487747c.tar.gz" -C "toolchains/clang-r487747c" || exit 1
 
+               curl -LO https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/heads/android12L-release.tar.gz
+               mkdir -p toolchains/arm-linux-androideabi
+               tar -xf android12L-release.tar.gz -C toolchains/arm-linux-androideabi
+         
       - name: Include goodies
         run: |
           cd ${{ inputs.soc }} || exit 1
@@ -241,7 +245,7 @@ jobs:
           export SUBARCH=arm64
           export LLVM=1
           export LLVM_IAS=0
-          export CROSS_COMPILE=aarch64-linux-gnu-
+          export CROSS_COMPILE_ARM32=${GITHUB_WORKSPACE}/toolchains/arm-linux-androideabi/bin/arm-linux-androideabi-
 
           cd ${{ inputs.soc }} || exit 1
 
@@ -258,7 +262,7 @@ jobs:
           export SUBARCH=arm64
           export LLVM=1
           export LLVM_IAS=0
-          export CROSS_COMPILE=aarch64-linux-gnu-
+          export CROSS_COMPILE_ARM32=${GITHUB_WORKSPACE}/toolchains/arm-linux-androideabi/bin/arm-linux-androideabi-
 
           cd ${{ inputs.soc }} || exit 1
 
