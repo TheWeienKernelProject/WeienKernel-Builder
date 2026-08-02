@@ -223,7 +223,7 @@ jobs:
 
               mkdir -p toolchains/clang-r487747c 
           
-              tar -xf "clang-r487747c .tar.gz" -C "toolchains/clang-r487747c " || exit 1
+              tar -xf "clang-r487747c.tar.gz" -C "toolchains/clang-r487747c " || exit 1
 
       - name: Include goodies
         run: |
@@ -250,7 +250,7 @@ jobs:
           cd ${{ inputs.soc }} || exit 1
 
 
-            make O=out sagit_defconfif vendor/addon.config
+            make O=out sagit_defconfig vendor/addon.config
 
             echo "CONFIG_KSU_TAMPER_SYSCALL_TABLE=y" >> out/.config
           
