@@ -223,7 +223,7 @@ jobs:
 
               mkdir -p toolchains/clang-r487747c 
           
-              tar -xf "clang-r487747c.tar.gz" -C "toolchains/clang-r487747c " || exit 1
+              tar -xf "clang-r487747c.tar.gz" -C "toolchains/clang-r487747c" || exit 1
 
       - name: Include goodies
         run: |
