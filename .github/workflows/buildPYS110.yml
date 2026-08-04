@@ -77,7 +77,7 @@ jobs:
           ZIP_NAME="kernel"
           git clone https://github.com/liuweien339-sys/AnyKernel3.git ak3
           cp mt6878/arch/arm64/boot/Image ak3/
-          cp mt6878/build.log ak3/
+          cp build.log ak3/
           cd ak3 
 
           zip -r9 ../"${ZIP_NAME}.zip" * -x .git
