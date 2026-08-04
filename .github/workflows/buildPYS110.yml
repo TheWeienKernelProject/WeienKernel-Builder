@@ -1,4 +1,4 @@
-name: Compile Kernel OnePlusTurbo6X
+name: Compile Kernel PYS110
 
 on:
   workflow_dispatch:
