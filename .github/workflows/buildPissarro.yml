@@ -60,7 +60,7 @@ jobs:
          
       - name: Make Kernel Configs
         run: |
-          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r416183b/bin"
+          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r416183b/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64
           export LLVM=1
@@ -73,7 +73,7 @@ jobs:
           
       - name: Build Kernel Image
         run: |
-          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r416183b/bin"
+          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r416183b/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64
           export LLVM=1
