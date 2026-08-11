@@ -35,7 +35,8 @@ jobs:
           dwarves \
           cpio \
           gcc-aarch64-linux-gnu \
-          linux-tools-common
+          linux-tools-common \
+          make
           
       - name: Clone Kernel Source
         run: |
