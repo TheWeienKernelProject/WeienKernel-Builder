@@ -51,6 +51,8 @@ jobs:
 
       - name: Include goodies
         run: |
+              cd pissarro
+              
               curl -LSs "https://raw.githubusercontent.com/backslashxx/KernelSU/refs/heads/master/kernel/setup.sh" | bash -s master
 
               touch ./.scmversion
