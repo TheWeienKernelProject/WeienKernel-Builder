@@ -23,20 +23,13 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y \
-          bc bison flex \
           libssl-dev \
           libelf-dev \
           libdw-dev \
           build-essential \
-          lz4 \
-          git \
-          python3 \
-          curl \
           dwarves \
-          cpio \
           gcc-aarch64-linux-gnu \
-          linux-tools-common \
-          make
+          linux-tools-common 
           
       - name: Clone Kernel Source
         run: |
