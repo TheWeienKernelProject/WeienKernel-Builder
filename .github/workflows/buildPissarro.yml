@@ -57,7 +57,7 @@ jobs:
           export ARCH=arm64
           export SUBARCH=arm64
           export LLVM=1
-          export LLVM_IAS=1
+          export LLVM_IAS=0
           export CROSS_COMPILE=aarch64-linux-gnu-
 
           cd pissarro
@@ -70,7 +70,7 @@ jobs:
           export ARCH=arm64
           export SUBARCH=arm64
           export LLVM=1
-          export LLVM_IAS=1
+          export LLVM_IAS=0
           export CROSS_COMPILE=aarch64-linux-gnu-
 
           cd pissarro
