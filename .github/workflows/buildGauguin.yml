@@ -83,7 +83,7 @@ jobs:
 
           cd gauguin
 
-          make vendor/lito-perf_defconfig vendor/xiaomi/gauguin.config vendor/addon.config
+          make buildconfig/gauguin_twkp_defconfig
           
       - name: Build Kernel Image
         run: |
