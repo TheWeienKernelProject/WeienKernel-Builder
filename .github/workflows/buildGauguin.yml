@@ -45,6 +45,7 @@ jobs:
 
       - name: Include goodies
         run: |
+              cd gauguin
               curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s main || exit 1
               sed -i '170s/error/warning/g' drivers/kernelsu/Kbuild
               sed -i '81s/-dirty//g' drivers/kernelsu/Kbuild
@@ -99,7 +100,7 @@ jobs:
           
       - name: Make AnyKernel3
         run: |
-          ZIP_NAME="kernel"
+          ZIP_NAME="GauguinKernel"
           git clone https://github.com/liuweien339-sys/AnyKernel3.git ak3
           cp gauguin/arch/arm64/boot/Image ak3/
           cp build.log ak3/
