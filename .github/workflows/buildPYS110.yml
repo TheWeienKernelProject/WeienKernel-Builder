@@ -54,7 +54,7 @@ jobs:
 
       - name: Make Confiig & Build Kernel Image
         run: |
-          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r487747c/bin":$PATH"
+          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r487747c/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64
           export LLVM=1
