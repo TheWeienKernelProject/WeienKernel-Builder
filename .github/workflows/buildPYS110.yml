@@ -44,7 +44,7 @@ jobs:
 
               mkdir ${GITHUB_WORKSPACE}/clang/
               
-              tar -xf "clang-r487747c.tar.gz" -C "${GITHUB_WORKSPACE}/clang/
+              tar -xf "clang-r487747c.tar.gz" -C "${GITHUB_WORKSPACE}/clang/"
               
       - name: Include DroidSpaces Patch
         run: |
