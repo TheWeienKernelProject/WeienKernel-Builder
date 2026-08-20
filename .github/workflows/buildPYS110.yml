@@ -41,20 +41,18 @@ jobs:
       - name: Download AOSP Clang
         run: |
               curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-qpr3-release/clang-r487747c.tar.gz
-
-              mkdir -p toolchains/clang-r487747c
           
-              tar -xf "clang-r487747c.tar.gz" -C "toolchains/clang-r487747c"
+              tar -xf clang-r487747c.tar.gz -C ${GITHUB_WORKSPACE}/
               
       - name: Include DroidSpaces Patch
         run: |
-              cd mt6878
-              curl -Lo patch-for-below-6.12.patch https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch || exit 1
-              patch -p1 < patch-for-below-6.12.patch
+              # cd mt6878
+              # curl -Lo ds.patch https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch  1
+              # patch -p1 < ds.patch
 
       - name: Make Confiig & Build Kernel Image
         run: |
-          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r487747c/bin:$PATH"
+          export PATH="${GITHUB_WORKSPACE}/clang-r487747c/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64
           export LLVM=1
@@ -76,7 +74,7 @@ jobs:
           zip -r9 ../"${ZIP_NAME}.zip" * -x .git
 
       - name: Upload to GitHub Actions Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
          name: Turbo6XKernel
          path: |
