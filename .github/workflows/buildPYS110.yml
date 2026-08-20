@@ -41,8 +41,10 @@ jobs:
       - name: Download AOSP Clang
         run: |
               curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-qpr3-release/clang-r487747c.tar.gz
-          
-              tar -xf clang-r487747c.tar.gz -C ${GITHUB_WORKSPACE}/
+
+              mkdir ${GITHUB_WORKSPACE}/clang/
+              
+              tar -xf "clang-r487747c.tar.gz" -C "${GITHUB_WORKSPACE}/clang/
               
       - name: Include DroidSpaces Patch
         run: |
@@ -52,7 +54,7 @@ jobs:
 
       - name: Make Confiig & Build Kernel Image
         run: |
-          export PATH="${GITHUB_WORKSPACE}/clang-r487747c/bin:$PATH"
+          export PATH="${GITHUB_WORKSPACE}/clang/clang-r487747c/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64
           export LLVM=1
