@@ -100,7 +100,7 @@ jobs:
           
       - name: Make AnyKernel3
         run: |
-          ZIP_NAME="GauguinKernel"
+          ZIP_NAME="Kernel"
           git clone https://github.com/liuweien339-sys/AnyKernel3.git ak3
           cp gauguin/arch/arm64/boot/Image ak3/
           cp build.log ak3/
@@ -111,8 +111,8 @@ jobs:
       - name: Upload to GitHub Actions Artifacts
         uses: actions/upload-artifact@v6
         with:
-         name: kernel
+         name: Gauguinkernel
          path: |
-          kernel.zip
+          ak3/*
          if-no-files-found: error
          compression-level: 6
