@@ -211,10 +211,10 @@ jobs:
 
       - name: Include kernel fetures
         run: |
-        # Include KernelSU
-          cd ${{ inputs.soc }} || exit 1
+           # Include KernelSU
+            cd ${{ inputs.soc }} || exit 1
           
-          case "${{ inputs.ksu_type }}" in
+             case "${{ inputs.ksu_type }}" in
 
             "None")
               ui_print "Skiped KernelSU"
@@ -236,62 +236,61 @@ jobs:
               curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s main || exit 1
               ;;
           
-          # Include DroidSpaces
-          # That's Reference Linux3141 Workflow and do some modified
-patch_6_12="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/kernel-6.12/001.GKI-6.12-or-above-fix_sysvipc_kabi.patch"
-patch_6_12_below="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch"
-patch_5_10_or_below="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/002.5.10_or_lower_use_android_abi_padding_for_posix_mqueue.patch"
-patch_4_1x="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/non-GKI/02.fix_restore%20cgroup%20file%20prefix%20handling%20.patch"
-patch_3_x="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/non-GKI/01.fix_kernel_panic_in_xt_qtaguid.patch"
+            # Include DroidSpaces
+            # That's Reference Linux3141 Workflow and do some modified
+            patch_6_12="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/kernel-6.12/001.GKI-6.12-or-above-fix_sysvipc_kabi.patch"
+            patch_6_12_below="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch"
+            patch_5_10_or_below="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/002.5.10_or_lower_use_android_abi_padding_for_posix_mqueue.patch"
+            patch_4_1x="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/non-GKI/02.fix_restore%20cgroup%20file%20prefix%20handling%20.patch"
+            patch_3_x="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/non-GKI/01.fix_kernel_panic_in_xt_qtaguid.patch"
 
-dsngki="${GITHUB_WORKSPACE}/config/ds_ngki.config"
-dsgki="${GITHUB_WORKSPACE}/config/ds_gki.config"
-configf="${GITHUB_WORKSPACE}/arch/arm64/configs/"
+            dsngki="${GITHUB_WORKSPACE}/config/ds_ngki.config"
+            dsgki="${GITHUB_WORKSPACE}/config/ds_gki.config"
+            configf="${GITHUB_WORKSPACE}/arch/arm64/configs/"
 
-if [[ "${{ inputs.droidspaces }}" == "6.12" ]]; then
-  curl -Lo 6.12.patch "$patch_6_12"
-        patch -p1 < 6.12.patch
-        cp "$dsgki" "$configf"
-elif [[ "${{ inputs.droidspaces }}" == "5.15-6.6" ]]; then
-   curl -Lo 6.12_below.patch "$patch_6_12_below"
-        patch -p1 < 6.12_below.patch
-   cp "$dsgki" "$configf"
-   
-elif [[ "${{ inputs.droidspaces }}" == "5.10" ]]; then
-   curl -Lo 6.12_below.patch "$patch_6_12_below"
-   curl -Lo 5.10_or_below.patch "$patch_5_10_or_below"
-        patch -p1 < 6.12_below.patch
-        patch -p1 < 5.10_or_below.patch
-        cp "$dsgki" "$configf"
-elif [[ "${{ inputs.droidspaces }}" == "5.4" ]]; then
-   curl -Lo 6.12_below.patch "$patch_6_12_below"
-   curl -Lo 5.10_or_below.patch "$patch_5_10_or_below"
-         patch -p1 < 6.12_below.patch
-        sed -i '/ANDROID_OEM_DATA_ARRAY/d' 5.10_or_below.patch
+            if [[ "${{ inputs.droidspaces }}" == "6.12" ]]; then
+            curl -Lo 6.12.patch "$patch_6_12"
+            patch -p1 < 6.12.patch
+            cp "$dsgki" "$configf"
+            elif [[ "${{ inputs.droidspaces }}" == "5.15-6.6" ]]; then
+            curl -Lo 6.12_below.patch "$patch_6_12_below"
+            patch -p1 < 6.12_below.patch
+            cp "$dsgki" "$configf"
+            elif [[ "${{ inputs.droidspaces }}" == "5.10" ]]; then
+            curl -Lo 6.12_below.patch "$patch_6_12_below"
+            curl -Lo 5.10_or_below.patch "$patch_5_10_or_below"
+            patch -p1 < 6.12_below.patch
+            patch -p1 < 5.10_or_below.patch
+            cp "$dsgki" "$configf"
+            elif [[ "${{ inputs.droidspaces }}" == "5.4" ]]; then
+            curl -Lo 6.12_below.patch "$patch_6_12_below"
+            curl -Lo 5.10_or_below.patch "$patch_5_10_or_below"
+            patch -p1 < 6.12_below.patch
+            sed -i '/ANDROID_OEM_DATA_ARRAY/d' 5.10_or_below.patch
             git apply --recount 5.10_or_below.patch 
-        cp "$dsgki" "$configf"
-elif [[ "${{ inputs.droidspaces }}" == "4.14-4.19" ]]; then
-    curl -Lo patch_4_1x.patch "$patch_4_1x"
-    patch -p1 < patch_4_1x.patch
-        cp "$dsngki" "$dsconfigf"
-elif [[ "${{ inputs.droidspaces }}" == "4.4-4.9" ]]; then
-      cp "$dsngki" "$configf"
-elif [[ "${{ inputs.droidspaces }}" == "3.18" ]]; then
-    curl -Lo patch_3_x.patch "$patch_3_x"
-    patch -p1 < patch_3_x.patch
-        cp "$dsngki" "$configf"
-elif [[ "${{ inputs.droidspaces }}" == "None" ]]; then
-    ui_print "Skiped DroidSpaces"
-fi
-        #Include NoMount
-        if [[ "${{ inputs.nomount }}" == "Yes" ]]; then
-        curl https://raw.githubusercontent.com/maxsteeel/nomount/refs/heads/dev/kernel/setup.sh | bash -
-        else
-    ui_print "Skiped Nomount"
-fi
-          # Include SuSFS
-          # That's Reference Linux3141 Workflow and do some modified
-          if [[ "${{ inputs.ksu_type }}" == *susfs* ]]; then
+            cp "$dsgki" "$configf"
+            elif [[ "${{ inputs.droidspaces }}" == "4.14-4.19" ]]; then
+            curl -Lo patch_4_1x.patch "$patch_4_1x"
+            patch -p1 < patch_4_1x.patch
+            cp "$dsngki" "$dsconfigf"
+            elif [[ "${{ inputs.droidspaces }}" == "4.4-4.9" ]]; then
+            cp "$dsngki" "$configf"
+            elif [[ "${{ inputs.droidspaces }}" == "3.18" ]]; then
+            curl -Lo patch_3_x.patch "$patch_3_x"
+            patch -p1 < patch_3_x.patch
+            cp "$dsngki" "$configf"
+            elif [[ "${{ inputs.droidspaces }}" == "None" ]]; then
+            ui_print "Skiped DroidSpaces"
+            fi
+           #Include NoMount
+           if [[ "${{ inputs.nomount }}" == "Yes" ]]; then
+           curl https://raw.githubusercontent.com/maxsteeel/nomount/refs/heads/dev/kernel/setup.sh | bash -
+           else
+           ui_print "Skiped Nomount"
+           fi
+           # Include SuSFS
+           # That's Reference Linux3141 Workflow and do some modified
+           if [[ "${{ inputs.ksu_type }}" == *susfs* ]]; then
 
             if [[ "${{ inputs.susfs-gki }}" == "None" && "${{ inputs.susfs-nongki }}" == "None" ]]; then
 
@@ -318,7 +317,7 @@ fi
 
             fi
             
-        touch /.scmversion
+            touch /.scmversion
         
       - name: Make Kernel Configs
         run: |
@@ -343,22 +342,22 @@ fi
 
           cd ${{ inputs.soc }} || exit 1
 
-if [[ -f "$dsconfigf/ds_gki.config" ]]; then
-    make ${{ inputs.kernel_configs }} ds_gki.config
-elif [[ -f "$dsconfigf/ds_ngki.config" ]]; then
-    make ${{ inputs.kernel_config }} ds_ngki.config
-else
-    make ${{ inputs.kernel_configs }} 
-fi
+          if [[ -f "$dsconfigf/ds_gki.config" ]]; then
+          make ${{ inputs.kernel_configs }} ds_gki.config
+          elif [[ -f "$dsconfigf/ds_ngki.config" ]]; then
+          make ${{ inputs.kernel_config }} ds_ngki.config
+          else
+          make ${{ inputs.kernel_configs }} 
+          fi
 
           if [[ "${{ inputs.ksu_type }}" == *susfs* ]]; then
-         cp ${GITHUB_WORKSPACE}/config/susfs.config $configf
+          cp ${GITHUB_WORKSPACE}/config/susfs.config $configf
           
-if [[ -f "$configf/susfs.config" ]]; then
-    make susfs.config
-else
-    ui_print "Skiped SuSFS"
-fi
+          if [[ -f "$configf/susfs.config" ]]; then
+          make susfs.config
+          else
+          ui_print "Skiped SuSFS"
+          fi
       - name: Build Kernel Image
         run: |
           export PATH="${GITHUB_WORKSPACE}/toolchains/${{ inputs.clang_version }}/bin:$PATH"
