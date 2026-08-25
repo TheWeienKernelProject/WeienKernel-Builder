@@ -129,7 +129,7 @@ on:
         type: boolean
         default: false
 jobs:
-  OnePlus Build Kernel:
+  OnePlusBuildKernel:
     env:
         GH_TOKEN: ${{ github.token }}
     runs-on: ubuntu-latest
