@@ -1,0 +1,403 @@
+name: OPlus Build Kernel [EXP]
+
+on:
+  workflow_dispatch:
+    inputs:
+      brand:
+        description: "请选择你的机型品牌 Please Selete Your Device Brand"
+        required: true
+        type: choice
+        default: oneplus
+        options:
+          - oneplus
+
+      soc:
+        description: "请输入你的机型芯片代号 如smxxx mtxxx Pleases Input Your Device SOC Name such as smxxx mtxxx"
+        required: true
+        type: string
+        default: ""
+      
+      partition_type:
+        description: "请输入你的机型分区类型 vab填v ab填b aonly填a Pleases Input Your Device Partition Type vab input v ab input b aonly input a"
+        required: true
+        type: string
+        default: ""
+        
+      system_version:
+        description: "请输入你的机型系统版本呢ColorOS16输入16.0.0 以此类推 Please Input Your Device SystemVersion such as ColorOS16 input 16.0.0 and behind same"
+        required: true
+        type: string
+        default: ""
+        
+      device_name:
+        description: "请输入你的机型明名称如一加ace2v输入ace2_v Please Input Your Device Name such as OplusAce2v input ace2_v and same for other devices"
+        required: true
+        type: string
+        default: ""
+        
+      clang_version:
+        description: "请选择设备编译内核时使用的Clang版本 如clang-r563880c Please Select Your Devices Clang Version such as clang-r563880c"
+        required: true
+        type: string
+        default: ""
+        
+      kernel_configs:
+        description: " 内核配置(config)路径 Kernel Config Folder"
+        required: true
+        type: string
+        default: ""
+
+      ksu_type:
+        description: "选择KSU类型 Chosse KernelSU Type"
+        required: true
+        type: choice
+        default: "ReSukiSU-with-susfs"
+        options:
+          - None
+          - KernelSU
+          - KernelSU-Next
+          - KernelSU-Next-susfs
+          - ReSukiSU
+          - ReSukiSU-susfs
+          
+      susfs-gki:
+        description: "如果需要SuSFS-GKI 请选择设备KMI If Need SuSFS-GKi Please Select Device KMI"
+        required: true
+        type: choice
+        default: None
+        options:
+          - None
+          - android12-5.10
+          - android13-5.10
+          - android13-5.15
+          - android14-5.15
+          - android14-6.1
+          - android15-6.6
+          - android16-6.12
+
+      susfs-nongki:
+        description: "如果需要SuSFS-NGKI 请选择设备内核版本 If Need SuSFS-NGKI Please Select Device Kernel Version"
+        required: true
+        type: choice
+        default: None
+        options:
+          - None
+          - 4.9
+          - 4.14
+          - 4.19
+          - 5.4
+
+      droidspaces:
+        description: "是否开启DroidSpaces Is Enable DroidSpaces"
+        required: true
+        type: choice
+        default: None
+        options:
+          - None
+          - 6.12
+          - 5.15-6.6
+          - 5.10
+          - 5.4
+          - 4.14-4.19
+          - 4.4-4.9
+          - 3.18
+      
+      nomount:
+        description: "是否开启Nomount Is Enable Nomount"
+        required: true
+        type: choice
+        default: None
+        options:
+          - Yes
+          - No
+          
+      has_modules_repo:
+        description: "是否有ModuleRepo Is Have Module Repo"
+        required: true
+        type: boolean
+        default: false
+
+      enable_gcc:
+        description: "是否开启GCC支持 Is Enable GCC Support"
+        required: true
+        type: boolean
+        default: true
+      
+      enable_gcc_32bits:
+        description: "是否开启GCC32位支持 Is Enable GCC 32-bit Support"
+        required: true
+        type: boolean
+        default: false
+jobs:
+  OnePlus Build Kernel:
+    env:
+        GH_TOKEN: ${{ github.token }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+      checks: read
+    steps:
+      - uses: actions/checkout@v7
+      
+      - name: Setup SWAP
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 16
+          
+      - name: Install build dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+          libssl-dev \
+          libelf-dev \
+          libdw-dev \
+          build-essential \
+          dwarves \
+          gcc-aarch64-linux-gnu \
+          linux-tools-common 
+
+      - name: Clone Kernel Src
+        run: |
+          git clone https://github.com/OnePlusOSS/android_kernel_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}
+          git clone https://github.com/OnePlusOSS/android_kernel_modules_and_device_tree_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}modules
+          
+      - name: Download AOSP Clang
+        run: |
+          case "${{ inputs.clang_version }}" in
+
+            "clang-r416183b1")
+              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android12-qpr3-release/clang-r416183b1.tar.gz
+              ;;
+
+            "clang-r450784d")
+              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android13-qpr3-release/clang-r450784d.tar.gz
+              ;;
+
+            "clang-r487747c")
+              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-qpr3-release/clang-r487747c.tar.gz
+              ;;
+
+            "clang-r536225")
+              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android15-qpr2-release/clang-r536225.tar.gz
+              ;;
+
+            "clang-r547379")
+              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android16-qpr2-release/clang-r547379.tar.gz
+              ;;
+              
+            "clang-r563880c")
+              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android16-qpr2-release/clang-r563880c.tar.gz
+              ;;
+              
+            "clang-r584948")
+              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android17-release/clang-r584948.tar.gz
+              ;;
+              
+          esac
+
+          mkdir -p toolchains/${{ inputs.clang_version }}
+          
+          tar -xf "${{ inputs.clang_version }}.tar.gz" -C "toolchains/${{ inputs.clang_version }}" || exit 1
+
+          if [[ "${{ inputs.enable_gcc_32bits }}" == "true" ]]; then
+
+            curl -LO https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/heads/android12L-release.tar.gz
+            mkdir -p toolchains/arm-linux-androideabi
+            tar -xf android12L-release.tar.gz -C toolchains/arm-linux-androideabi
+         
+          fi
+
+
+      - name: Include kernel fetures
+        run: |
+        # Include KernelSU
+          cd ${{ inputs.soc }} || exit 1
+          
+          case "${{ inputs.ksu_type }}" in
+
+            "None")
+              ui_print "Skiped KernelSU"
+              ;;
+
+            "KernelSU")
+              curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main || exit 1
+              ;;
+
+            "KernelSU-Next")
+              curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s dev || exit 1
+              ;;
+
+            "KernelSU-Next-susfs")
+              curl -LSs "https://raw.githubusercontent.com/pershoot/KernelSU-Next/refs/heads/dev-susfs/kernel/setup.sh" | bash -s dev-susfs || exit 1
+              ;;
+
+            "ReSukiSU"|"ReSukiSU-susfs")
+              curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s main || exit 1
+              ;;
+          
+          # Include DroidSpaces
+          # That's Reference Linux3141 Workflow and do some modified
+patch_6_12="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/kernel-6.12/001.GKI-6.12-or-above-fix_sysvipc_kabi.patch"
+patch_6_12_below="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch"
+patch_5_10_or_below="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/002.5.10_or_lower_use_android_abi_padding_for_posix_mqueue.patch"
+patch_4_1x="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/non-GKI/02.fix_restore%20cgroup%20file%20prefix%20handling%20.patch"
+patch_3_x="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/non-GKI/01.fix_kernel_panic_in_xt_qtaguid.patch"
+
+dsngki="${GITHUB_WORKSPACE}/config/ds_ngki.config"
+dsgki="${GITHUB_WORKSPACE}/config/ds_gki.config"
+configf="${GITHUB_WORKSPACE}/arch/arm64/configs/"
+
+if [[ "${{ inputs.droidspaces }}" == "6.12" ]]; then
+  curl -Lo 6.12.patch "$patch_6_12"
+        patch -p1 < 6.12.patch
+        cp "$dsgki" "$configf"
+elif [[ "${{ inputs.droidspaces }}" == "5.15-6.6" ]]; then
+   curl -Lo 6.12_below.patch "$patch_6_12_below"
+        patch -p1 < 6.12_below.patch
+   cp "$dsgki" "$configf"
+   
+elif [[ "${{ inputs.droidspaces }}" == "5.10" ]]; then
+   curl -Lo 6.12_below.patch "$patch_6_12_below"
+   curl -Lo 5.10_or_below.patch "$patch_5_10_or_below"
+        patch -p1 < 6.12_below.patch
+        patch -p1 < 5.10_or_below.patch
+        cp "$dsgki" "$configf"
+elif [[ "${{ inputs.droidspaces }}" == "5.4" ]]; then
+   curl -Lo 6.12_below.patch "$patch_6_12_below"
+   curl -Lo 5.10_or_below.patch "$patch_5_10_or_below"
+         patch -p1 < 6.12_below.patch
+        sed -i '/ANDROID_OEM_DATA_ARRAY/d' 5.10_or_below.patch
+            git apply --recount 5.10_or_below.patch 
+        cp "$dsgki" "$configf"
+elif [[ "${{ inputs.droidspaces }}" == "4.14-4.19" ]]; then
+    curl -Lo patch_4_1x.patch "$patch_4_1x"
+    patch -p1 < patch_4_1x.patch
+        cp "$dsngki" "$dsconfigf"
+elif [[ "${{ inputs.droidspaces }}" == "4.4-4.9" ]]; then
+      cp "$dsngki" "$configf"
+elif [[ "${{ inputs.droidspaces }}" == "3.18" ]]; then
+    curl -Lo patch_3_x.patch "$patch_3_x"
+    patch -p1 < patch_3_x.patch
+        cp "$dsngki" "$configf"
+elif [[ "${{ inputs.droidspaces }}" == "None" ]]; then
+    ui_print "Skiped DroidSpaces"
+fi
+        #Include NoMount
+        if [[ "${{ inputs.nomount }}" == "Yes" ]]; then
+        curl https://raw.githubusercontent.com/maxsteeel/nomount/refs/heads/dev/kernel/setup.sh | bash -
+        else
+    ui_print "Skiped Nomount"
+fi
+          # Include SuSFS
+          # That's Reference Linux3141 Workflow and do some modified
+          if [[ "${{ inputs.ksu_type }}" == *susfs* ]]; then
+
+            if [[ "${{ inputs.susfs-gki }}" == "None" && "${{ inputs.susfs-nongki }}" == "None" ]]; then
+
+              echo "Skiped SuSFS"
+
+            elif [[ "${{ inputs.susfs-gki }}" != "None" && "${{ inputs.susfs-nongki }}" != "None" ]]; then
+
+              echo "bro why you chosse ngki & gki susfs?"
+              exit 1
+
+            elif [[ "${{ inputs.susfs-gki }}" != "None" ]]; then
+
+              git clone -b gki-${{ inputs.susfs-gki }} https://gitlab.com/simonpunk/susfs4ksu.git susfs
+              cd susfs
+              cp ./kernel_patches/50_add_susfs_in_gki-${{ inputs.susfs-gki }}.patch ../susfs.patch
+              cp ./kernel_patches/fs/* ../fs/
+              cp ./kernel_patches/include/linux/* ../include/linux/
+              cd ..
+
+            elif [[ "${{ inputs.susfs-nongki }}" != "None" ]]; then
+
+              curl -Lo susfs.patch https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/susfs_patch_to_${{ inputs.susfs-nongki }}.patch
+              curl -Lo inline.sh https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh
+
+            fi
+            
+        touch /.scmversion
+        
+      - name: Make Kernel Configs
+        run: |
+          configf="${GITHUB_WORKSPACE}/arch/arm64/configs/"
+          export PATH="${GITHUB_WORKSPACE}/toolchains/${{ inputs.clang_version }}/bin:$PATH"
+          export ARCH=arm64
+          export SUBARCH=arm64
+          export LLVM=1
+          export LLVM_IAS=1
+
+          if [[ "${{ inputs.enable_gcc }}" == "true" ]]; then
+
+            export CROSS_COMPILE=aarch64-linux-gnu-
+
+          fi
+
+          if [[ "${{ inputs.enable_gcc_32bits }}" == "true" ]]; then
+            
+            export CROSS_COMPILE_ARM32=${GITHUB_WORKSPACE}/toolchains/arm-linux-androideabi/bin/arm-linux-androideabi-
+          
+          fi
+
+          cd ${{ inputs.soc }} || exit 1
+
+if [[ -f "$dsconfigf/ds_gki.config" ]]; then
+    make ${{ inputs.kernel_configs }} ds_gki.config
+elif [[ -f "$dsconfigf/ds_ngki.config" ]]; then
+    make ${{ inputs.kernel_config }} ds_ngki.config
+else
+    make ${{ inputs.kernel_configs }} 
+fi
+
+          if [[ "${{ inputs.ksu_type }}" == *susfs* ]]; then
+         cp ${GITHUB_WORKSPACE}/config/susfs.config $configf
+          
+if [[ -f "$configf/susfs.config" ]]; then
+    make susfs.config
+else
+    ui_print "Skiped SuSFS"
+fi
+      - name: Build Kernel Image
+        run: |
+          export PATH="${GITHUB_WORKSPACE}/toolchains/${{ inputs.clang_version }}/bin:$PATH"
+          export ARCH=arm64
+          export SUBARCH=arm64
+          export LLVM=1
+          export LLVM_IAS=1
+
+          if [[ "${{ inputs.enable_gcc }}" == "true" ]]; then
+
+            export CROSS_COMPILE=aarch64-linux-gnu-
+            
+          fi
+
+          if [[ "${{ inputs.enable_gcc_32bits }}" == "true" ]]; then
+            
+            export CROSS_COMPILE_ARM32=${GITHUB_WORKSPACE}/toolchains/arm-linux-androideabi/bin/arm-linux-androideabi-
+          
+          fi
+
+          cd ${{ inputs.soc }} || exit 1
+          
+          make -j$(nrpoc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
+          
+      - name: Make AnyKernel3
+        run: |
+          ZIP_NAME="${{ inputs.soc }}_${{ inputs.system_version }}_${{ inputs.device_name }}"
+          git clone https://github.com/liuweien339-sys/AnyKernel3.git
+          cp "${{ inputs.soc }}"/arch/arm64/boot/Image ak3/
+          cp build.log ak3/
+          cd ak3 
+
+          zip -r9 ../"${ZIP_NAME}.zip" * -x .git
+
+      - name: Upload to GitHub Actions Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+         name: kernel
+         path: |
+          ak3/*
+         if-no-files-found: error
+         compression-level: 6
