@@ -165,7 +165,7 @@ jobs:
 
       - name: Clone Kernel Src
         run: |
-          if [[ "${{ inputs.has_modules_repo }}" == "true ]]
+          if [[ "${{ inputs.has_modules_repo }}" == "true" ]]
           git clone https://github.com/${{ inputs.repo_name }}/android_kernel_modules_and_device_tree_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}modules
           cp ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/kernel ${GITHUB_WORKSPACE}/
           cp ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/vendor ${GITHUB_WORKSPACE}/ 
