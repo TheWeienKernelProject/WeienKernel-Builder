@@ -171,7 +171,7 @@ jobs:
           cp ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/vendor ${GITHUB_WORKSPACE}/ 
           else
           git clone https://github.com/${{ inputs.repo_name }}/android_kernel_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}
-          
+          fi
       - name: Download AOSP Clang
         run: |
           case "${{ inputs.clang_version }}" in
