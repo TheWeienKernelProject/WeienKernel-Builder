@@ -3,6 +3,12 @@ name: OPlus Build Kernel [EXP]
 on:
   workflow_dispatch:
     inputs:
+      repo_name:
+        description: "请输入你的机型源码仓库所有者 Pleases Input Your Device kernel source repo name"
+        required: true
+        type: string
+        default: ""
+        
       brand:
         description: "请选择你的机型品牌 Please Selete Your Device Brand"
         required: true
@@ -30,7 +36,7 @@ on:
         default: ""
         
       device_name:
-        description: "请输入你的机型明名称如一加ace2v输入ace2_v Please Input Your Device Name such as OplusAce2v input ace2_v and same for other devices"
+        description: "请输入你的机型名称如一加ace2v输入ace2_v Please Input Your Device Name such as OplusAce2v input ace2_v and same for other devices"
         required: true
         type: string
         default: ""
@@ -159,8 +165,12 @@ jobs:
 
       - name: Clone Kernel Src
         run: |
-          git clone https://github.com/OnePlusOSS/android_kernel_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}
-          git clone https://github.com/OnePlusOSS/android_kernel_modules_and_device_tree_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}modules
+          if [[ "${{ inputs.has_modules_repo }}" == "true
+          git clone https://github.com/${{ inputs.repo_name }}/android_kernel_modules_and_device_tree_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}modules
+          cp ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/kernel ${GITHUB_WORKSPACE}/
+          cp ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/vendor ${GITHUB_WORKSPACE}/ 
+          else
+          git clone https://github.com/${{ inputs.repo_name }}/android_kernel_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}
           
       - name: Download AOSP Clang
         run: |
