@@ -3,6 +3,15 @@ name: OPlus Build Kernel [EXP]
 on:
   workflow_dispatch:
     inputs:
+      repo_host:
+        description: "请选择你的机型源码托管主机名 Please Selete Your Device kernel src host"
+        required: true
+        type: choice
+        default: github.com
+        options:
+          - github.com
+          - gitlab.com
+          
       repo_name:
         description: "请输入你的机型源码仓库所有者 Pleases Input Your Device kernel source repo name"
         required: true
@@ -165,12 +174,12 @@ jobs:
 
       - name: Clone Kernel Src
         run: |
-          if [[ "${{ inputs.has_modules_repo }}" == "true" ]]
-          git clone https://github.com/${{ inputs.repo_name }}/android_kernel_modules_and_device_tree_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}modules
+          if [[ "${{ inputs.has_modules_repo }}" == "true" ]]; then
+          git clone https://${{ inputs.repo_host }}/${{ inputs.repo_name }}/android_kernel_modules_and_device_tree_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}-modules
           cp ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/kernel ${GITHUB_WORKSPACE}/
           cp ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/vendor ${GITHUB_WORKSPACE}/ 
           else
-          git clone https://github.com/${{ inputs.repo_name }}/android_kernel_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}
+          git clone https://${{ inputs.repo_host }}/${{ inputs.repo_name }}/android_kernel_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}
           fi
       - name: Download AOSP Clang
         run: |
