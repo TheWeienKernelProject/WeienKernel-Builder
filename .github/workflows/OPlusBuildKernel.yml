@@ -12,6 +12,16 @@ on:
           - github.com
           - gitlab.com
           
+      kernel_fomata:
+        description: "请输入你的机型源码的头是什么 Please Selete Your Device kernel src head fomata"
+        required: true
+        type: choice
+        default: kernel
+        options:
+          - kernel
+          - android_kernel
+          - android_WeienKernel
+          
       repo_name:
         description: "请输入你的机型源码仓库所有者 Pleases Input Your Device kernel source repo name"
         required: true
@@ -66,7 +76,7 @@ on:
         description: "选择KSU类型 Chosse KernelSU Type"
         required: true
         type: choice
-        default: "ReSukiSU-with-susfs"
+        default: "None"
         options:
           - None
           - KernelSU
@@ -175,11 +185,11 @@ jobs:
       - name: Clone Kernel Src
         run: |
           if [[ "${{ inputs.has_modules_repo }}" == "true" ]]; then
-          git clone https://${{ inputs.repo_host }}/${{ inputs.repo_name }}/android_kernel_modules_and_device_tree_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}-modules
+          git clone https://${{ inputs.repo_host }}/${{ inputs.repo_name }}/${{ inputs.kernel_fomata }}_modules_and_device_tree_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device_name }} --depth=1 ${{ inputs.soc }}-modules
           cp ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/kernel ${GITHUB_WORKSPACE}/
           cp ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/vendor ${GITHUB_WORKSPACE}/ 
           else
-          git clone https://${{ inputs.repo_host }}/${{ inputs.repo_name }}/android_kernel_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device.name }} --depth=1 ${{ inputs.soc }}
+          git clone https://${{ inputs.repo_host }}/${{ inputs.repo_name }}/${{ inputs.kernel_fomata }}_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device_name }} --depth=1 ${{ inputs.soc }}
           fi
       - name: Download AOSP Clang
         run: |
