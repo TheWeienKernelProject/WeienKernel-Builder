@@ -60,8 +60,8 @@ on:
         type: string
         default: ""
         
-      clang_version:
-        description: "请选择设备编译内核时使用的Clang版本 如clang-r563880c Please Select Your Devices Clang Version such as clang-r563880c"
+      android_version:
+        description: "请选择设备底层安卓版本 Please Input Your device android version"
         required: true
         type: string
         default: ""
@@ -191,43 +191,14 @@ jobs:
           else
           git clone https://${{ inputs.repo_host }}/${{ inputs.repo_name }}/${{ inputs.kernel_fomata }}_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device_name }} --depth=1 ${{ inputs.soc }}
           fi
+          
       - name: Download AOSP Clang
         run: |
-          case "${{ inputs.clang_version }}" in
+          curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/${{ inputs.android_version }}-release/clang-stable.tar.gz
 
-            "clang-r416183b1")
-              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android12-qpr3-release/clang-r416183b1.tar.gz
-              ;;
-
-            "clang-r450784d")
-              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android13-qpr3-release/clang-r450784d.tar.gz
-              ;;
-
-            "clang-r487747c")
-              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-qpr3-release/clang-r487747c.tar.gz
-              ;;
-
-            "clang-r536225")
-              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android15-qpr2-release/clang-r536225.tar.gz
-              ;;
-
-            "clang-r547379")
-              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android16-qpr2-release/clang-r547379.tar.gz
-              ;;
-              
-            "clang-r563880c")
-              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android16-qpr2-release/clang-r563880c.tar.gz
-              ;;
-              
-            "clang-r584948")
-              wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android17-release/clang-r584948.tar.gz
-              ;;
-              
-          esac
-
-          mkdir -p toolchains/${{ inputs.clang_version }}
+          mkdir -p toolchains/clang
           
-          tar -xf "${{ inputs.clang_version }}.tar.gz" -C "toolchains/${{ inputs.clang_version }}" || exit 1
+          tar -xf "clang-stable.tar.gz" -C "toolchains/clang" || exit 1
 
           if [[ "${{ inputs.enable_gcc_32bits }}" == "true" ]]; then
 
