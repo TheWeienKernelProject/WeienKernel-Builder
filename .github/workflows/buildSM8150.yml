@@ -68,7 +68,7 @@ jobs:
 
           cd sm8150
 
-          make vendor/sm8150-perf_defconfig vendor/oplus.config
+          make vendor/sm8150-perf_defconfig vendor/oplus.config vendor/addon.config
           
       - name: Build Kernel Image
         run: |
