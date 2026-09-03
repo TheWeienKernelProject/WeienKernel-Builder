@@ -20,6 +20,9 @@ jobs:
 
       - name: Include Patch
         run: |
+
+              cd sm8150
+              
               curl -Lo susfs.patch https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/susfs_patch_to_4.14.patch || exit 1
               
               patch -p1 < susfs.patch || true
