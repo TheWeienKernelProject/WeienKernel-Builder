@@ -49,11 +49,11 @@ jobs:
               curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s main || exit 1
               sed -i '171s/error/warning/g' drivers/kernelsu/Kbuild
               sed -i '82s/-dirty//g' drivers/kernelsu/Kbuild
-              curl -Lo susfs.patch https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/susfs_patch_to_4.14.patch || exit 1
-              curl -Lo inline.sh https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh || exit 1
+              curl -Lo susfs.patch https://raw.githubusercontent.com/liuweien339-sys/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/4.14.357_SM8150_los23.2-fixup.patch || exit 1
+              curl -Lo inline.sh https://raw.githubusercontent.com/liuweien339-sys/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh || exit 1
 
-              patch -p1 < susfs.patch || true
-              bash inline.sh || true
+              patch -p1 < susfs.patch 
+              bash inline.sh 
 
               touch ./.scmversion
          
