@@ -34,6 +34,6 @@ jobs:
         with:
          name: SM8150PatchTest
          path: |
-          sm8150/*.obj
+          sm8150/*.rej
          if-no-files-found: error
          compression-level: 6
