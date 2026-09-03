@@ -1,0 +1,36 @@
+name: Test Patch Kernel (TestSM8150)
+
+on:
+  workflow_dispatch:
+jobs:
+  Kernel:
+    env:
+        GH_TOKEN: ${{ github.token }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+      checks: read
+    steps:
+      - uses: actions/checkout@v7
+          
+      - name: Clone Kernel Source
+        run: |
+          git clone https://github.com/liuweien339-sys/android_kernel_oneplus_sm8150/ --depth=1 -b lineage-23.2 sm8150
+
+      - name: Include Patch
+        run: |
+              curl -Lo susfs.patch https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/susfs_patch_to_4.14.patch || exit 1
+              
+              patch -p1 < susfs.patch || true
+
+              touch ./.scmversion
+              
+      - name: Upload Test Summary
+        uses: actions/upload-artifact@v6
+        with:
+         name: SM8150PatchTest
+         path: |
+          sm8150/*.obj
+         if-no-files-found: error
+         compression-level: 6
