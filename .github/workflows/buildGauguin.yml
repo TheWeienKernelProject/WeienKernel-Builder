@@ -45,6 +45,7 @@ jobs:
 
       - name: Include goodies
         run: |
+              source_name=gauguin
               cd gauguin
               curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s main || exit 1
               sed -i '171s/error/warning/g' drivers/kernelsu/Kbuild
@@ -70,8 +71,9 @@ jobs:
               
               sed -i 's/\.mmap_sem\s*=\s*__RWSEM_INITIALIZER(efi_mm\.mmap_sem)/.mmap_lock = __RWSEM_INITIALIZER(efi_mm.mmap_lock)/' drivers/firmware/efi/efi.c
 
-              curl -Lo rkpatchs.sh https://raw.githubusercontent.com/Sakion-Team/Re-Kernel/refs/head/main/Integrate/patches.sh
-              bash rkpatchs.sh
+              chmod +x ${GITHUB_WORKSPACE}/helper/*
+              bash ${GITHUB_WORKSPACE}/helper/ReKernelIntegrate
+              bash ${GITHUB_WORKSPACE}/helper/NoMountIntegrate
               
               touch ./.scmversion
          
