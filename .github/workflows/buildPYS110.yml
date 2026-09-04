@@ -48,15 +48,19 @@ jobs:
               
       - name: Include Patch
         run: |
-              source_name=mt6878
               cd mt6878
               curl -Lo ds.patch https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch
               patch -p1 < ds.patch || true
 
-              chmod +x ${GITHUB_WORKSPACE}/helper/*
-              bash ${GITHUB_WORKSPACE}/helper/ReKernelIntegrate
-              bash ${GITHUB_WORKSPACE}/helper/NoMountIntegrate
-              
+              git clone https://github.com/Nep-Timeline/Re-Kernel/ -b main --depth=1
+              git clone https://github.com/maxsteeel/nomount/ -b master --depth=1
+              mkdir ${GITHUB_WORKSPACE}/mt6878/fs/nomount
+              mkdir ${GITHUB_WORKSPACE}/mt6878/drivers/rekernel
+              cp ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/rekernel/* ${GITHUB_WORKSPACE}/gauguin/drivers/rekernel
+              cp ${GITHUB_WORKSPACE}/nomount/kernel/src/* ${GITHUB_WORKSPACE}/gauguin/fs/nomount
+              cd ${GITHUB_WORKSPACE}/mt6878/
+              bash ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/patches.sh 
+              bash ${GITHUB_WORKSPACE}/nomount/kernel/setup.sh 
               
       - name: Make Confiig & Build Kernel Image
         run: |
