@@ -5,6 +5,6 @@ ui_print "Copy ReKernel kernel source to kernel source"
 mkdir ${GITHUB_WORKSPACE}/$source_name/drivers/rekernel
 cp ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/rekernel/* ${GITHUB_WORKSPACE}/$source_name/drivers/rekernel
 ui_print "Copied"
-ui_print "bashing setup.sh"
+ui_print "bashing patches.sh"
 cd ${GITHUB_WORKSPACE}/$source_name/
-bash ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/setup.sh 
+bash ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/patches.sh 
