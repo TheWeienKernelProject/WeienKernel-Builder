@@ -45,7 +45,6 @@ jobs:
 
       - name: Include goodies
         run: |
-              source_name=gauguin
               cd gauguin
               curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s main || exit 1
               sed -i '171s/error/warning/g' drivers/kernelsu/Kbuild
