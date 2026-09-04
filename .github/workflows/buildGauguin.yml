@@ -70,7 +70,7 @@ jobs:
               
               sed -i 's/\.mmap_sem\s*=\s*__RWSEM_INITIALIZER(efi_mm\.mmap_sem)/.mmap_lock = __RWSEM_INITIALIZER(efi_mm.mmap_lock)/' drivers/firmware/efi/efi.c
 
-              git clone https://github.com/Nep-Timeline/Re-Kernel/ -b main --depth=1
+              git clone https://github.com/Sakion-Team/Re-Kernel/ -b main --depth=1
               git clone https://github.com/maxsteeel/nomount/ -b master --depth=1
               mkdir ${GITHUB_WORKSPACE}/gauguin/fs/nomount
               mkdir ${GITHUB_WORKSPACE}/gauguin/drivers/rekernel
