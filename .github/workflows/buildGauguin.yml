@@ -43,7 +43,7 @@ jobs:
           if [[ "${{ inputs.backport }}" == "true" ]]; then
           git clone https://github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_gauguin.git gauguin --depth=1 -b backport
           else
-          git clone https://github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_gauguin.git gauguin --depth=1 -b lineage-23.2-kernel-2.0
+          git clone https://github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_gauguin.git gauguin --depth=1 -b lineage-23.2-kernel2.0
           fi
       - name: Download AOSP Clang
         run: |
