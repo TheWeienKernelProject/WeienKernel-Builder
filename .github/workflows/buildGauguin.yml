@@ -52,6 +52,20 @@ jobs:
               cd gauguin
               mkdir io_uring
               cp ${GITHUB_WORKSPACE}/temp/* ${GITHUB_WORKSPACE}/gauguin/io_uring
+              sed -i 's/#include <linux\/shched/\signal.h>/#include <linux\/sched.h>/g' io_uring/io-wq.c
+              sed -i 's/#include <linux\/shched/\signal.h>/#include <linux\/sched.h>/g' io_uring/io_uring.c
+              sed -i 's/#include <linux\/shched/\mm.h>/#include <linux\/sched.h>/g' io_uring/io_uring.c
+              sed -i 's/#include <linux\/fadvise.h>/#include <uapi\/linux\/fadvise.h>/g' io_uring/io_uring.c
+              cd ${GITHUB_WORKSPACE}/temp
+              curl -Lo https://android.googlesource.com/kernel/common/+archive/refs/heads/android12-5.10/include/uapi/linux.tar.gz
+              tar -xf linux.tar.gz
+              cp io_uring.h ${GITHUB_WORKSPACE}/gauguin/include/uapi/linux/
+              curl -Lo https://android.googlesource.com/kernel/common/+archive/refs/heads/android12-5.10/include/trace/events/linux.tar.gz
+              tar -xf linux.tar.gz
+              cp io_uring.h ${GITHUB_WORKSPACE}/gauguin/include/trace/events/
+              curl -Lo https://android.googlesource.com/kernel/common/+archive/refs/heads/android12-5.10/include/linux.tar.gz
+              tar -xf linux.tar.gz
+              cp io_uring.h ${GITHUB_WORKSPACE}/gauguin/include/linux/
               rm -f temp
               
               cd gauguin
