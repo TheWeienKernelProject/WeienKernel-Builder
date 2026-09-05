@@ -45,6 +45,15 @@ jobs:
 
       - name: Include goodies
         run: |
+              # only see how many error
+              mkdir temp & cd temp
+              curl -Lo https://android.googlesource.com/kernel/common/+archive/refs/heads/android12-5.10/io_uring.tar.gz
+              tar -xf io_uring.tar.gz
+              cd gauguin
+              mkdir io_uring
+              cp ${GITHUB_WORKSPACE}/temp/* ${GITHUB_WORKSPACE}/gauguin/io_uring
+              rm -f temp
+              
               cd gauguin
               curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s main || exit 1
               sed -i '171s/error/warning/g' drivers/kernelsu/Kbuild
