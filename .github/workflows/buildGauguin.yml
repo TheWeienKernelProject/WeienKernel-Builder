@@ -54,6 +54,7 @@ jobs:
               curl -Lo io_uring.tar.gz "https://android.googlesource.com/kernel/common/+archive/refs/heads/android12-5.10/io_uring.tar.gz"
               tar -xf io_uring.tar.gz
 
+              mkdir -p "${KERNEL_DIR}/io_uring/"
               cp -f *.h "${KERNEL_DIR}/io_uring/" 
               
               sed -i 's|#include <linux/sched/signal.h>|#include <linux/sched.h>|g' "${KERNEL_DIR}/io_uring/io_uring.c"
