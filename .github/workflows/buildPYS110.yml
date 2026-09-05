@@ -62,6 +62,8 @@ jobs:
               cd ${GITHUB_WORKSPACE}/mt6878/
               bash ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/patches.sh 
               bash ${GITHUB_WORKSPACE}/nomount/kernel/setup.sh 
+              sed -i 's/%d\([^"]*netlink_unit\)/%lu\1/g' drivers/rekernel/rekernel.c
+              sed -i 's/task_uid(dst).val, rpc_type\[type\], -1/task_uid(dst).val/' drivers/rekernel/rekernel.c
               
       - name: Make Confiig & Build Kernel Image
         run: |
