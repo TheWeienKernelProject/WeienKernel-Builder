@@ -105,11 +105,13 @@ jobs:
           cd gauguin
 
           make vendor/lito-perf_defconfig vendor/xiaomi/gauguin.config vendor/addon.config
+
+          if [[ "${{ inputs.backport }}" == "true" ]]; then
           sed -i '/CONFIG_IO_URING/d' .config
           echo "CONFIG_IO_URING=y" >> .config
           sed -i '/CONFIG_IO_WQ/d' .config
           echo "CONFIG_IO_WA=y" >> .config
-          
+          fi
       - name: Build Kernel Image
         run: |
           export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r563880c/bin:$PATH"
