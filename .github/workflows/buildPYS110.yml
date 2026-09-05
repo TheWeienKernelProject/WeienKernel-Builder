@@ -57,8 +57,8 @@ jobs:
               git clone https://github.com/maxsteeel/nomount/ -b master --depth=1
               mkdir ${GITHUB_WORKSPACE}/mt6878/fs/nomount
               mkdir ${GITHUB_WORKSPACE}/mt6878/drivers/rekernel
-              cp ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/rekernel/* ${GITHUB_WORKSPACE}/gauguin/drivers/rekernel
-              cp ${GITHUB_WORKSPACE}/nomount/kernel/src/* ${GITHUB_WORKSPACE}/gauguin/fs/nomount
+              cp ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/rekernel/* ${GITHUB_WORKSPACE}/mt6878/drivers/rekernel
+              cp ${GITHUB_WORKSPACE}/nomount/kernel/src/* ${GITHUB_WORKSPACE}/mt6878/fs/nomount
               cd ${GITHUB_WORKSPACE}/mt6878/
               bash ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/patches.sh 
               bash ${GITHUB_WORKSPACE}/nomount/kernel/setup.sh 
