@@ -65,6 +65,7 @@ jobs:
               sed -i 's/%d\([^"]*netlink_unit\)/%lu\1/g' drivers/rekernel/rekernel.c
               sed -i 's/task_uid(dst).val, rpc_type\[type\], -1/task_uid(dst).val/' drivers/rekernel/rekernel.c
               sed -i 's/%d\\n", netlink_unit/%lu\\n", netlink_unit/g; s/%d\\n", netlink_unit/%lu\\n", netlink_unit/g; s/%d", netlink_unit/%lu", netlink_unit/g' drivers/rekernel/rekernel.c
+              sed -i 's/static const char\* rpc_type\[\]/static const char* rpc_type[] __attribute__((unused))/' drivers/rekernel/rekernel.c
               
       - name: Make Confiig & Build Kernel Image
         run: |
