@@ -95,6 +95,10 @@ jobs:
           cd gauguin
 
           make vendor/lito-perf_defconfig vendor/xiaomi/gauguin.config vendor/addon.config
+          sed -i '/CONFIG_IO_URING/d' .config
+          echo "CONFIG_IO_URING=y" >> .config
+          sed -i '/CONFIG_IO_WQ/d' .config
+          echo "CONFIG_IO_WA=y" >> .config
           
       - name: Build Kernel Image
         run: |
