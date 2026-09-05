@@ -46,27 +46,40 @@ jobs:
       - name: Include goodies
         run: |
               # only see how many error
-              mkdir temp & cd temp
-              curl -Lo https://android.googlesource.com/kernel/common/+archive/refs/heads/android12-5.10/io_uring.tar.gz
+              KERNEL_DIR="${GITHUB_WORKSPACE}/gauguin"
+              TEMP_DIR="${GITHUB_WORKSPACE}/temp"        
+    
+              mkdir -p "${TEMP_DIR}"
+              
+              curl -Lo io_uring.tar.gz "https://android.googlesource.com/kernel/common/+archive/refs/heads/android12-5.10/io_uring.tar.gz"
               tar -xf io_uring.tar.gz
-              cd gauguin
-              mkdir io_uring
-              cp ${GITHUB_WORKSPACE}/temp/* ${GITHUB_WORKSPACE}/gauguin/io_uring
-              sed -i 's/#include <linux\/shched/\signal.h>/#include <linux\/sched.h>/g' io_uring/io-wq.c
-              sed -i 's/#include <linux\/shched/\signal.h>/#include <linux\/sched.h>/g' io_uring/io_uring.c
-              sed -i 's/#include <linux\/shched/\mm.h>/#include <linux\/sched.h>/g' io_uring/io_uring.c
-              sed -i 's/#include <linux\/fadvise.h>/#include <uapi\/linux\/fadvise.h>/g' io_uring/io_uring.c
-              cd ${GITHUB_WORKSPACE}/temp
-              curl -Lo https://android.googlesource.com/kernel/common/+archive/refs/heads/android12-5.10/include/uapi/linux.tar.gz
-              tar -xf linux.tar.gz
-              cp io_uring.h ${GITHUB_WORKSPACE}/gauguin/include/uapi/linux/
-              curl -Lo https://android.googlesource.com/kernel/common/+archive/refs/heads/android12-5.10/include/trace/events/linux.tar.gz
-              tar -xf linux.tar.gz
-              cp io_uring.h ${GITHUB_WORKSPACE}/gauguin/include/trace/events/
-              curl -Lo https://android.googlesource.com/kernel/common/+archive/refs/heads/android12-5.10/include/linux.tar.gz
-              tar -xf linux.tar.gz
-              cp io_uring.h ${GITHUB_WORKSPACE}/gauguin/include/linux/
-              rm -f temp
+
+              cp -f *.h "${KERNEL_DIR}/io_uring/" 
+              
+              sed -i 's|#include <linux/sched/signal.h>|#include <linux/sched.h>|g' "${KERNEL_DIR}/io_uring/io_uring.c"
+              sed -i 's|#include <linux/sched/mm.h>|#include <linux/sched.h>|g' "${KERNEL_DIR}/io_uring/io_uring.c"
+              sed -i 's|#include <linux/sched/signal.h>|#include <linux/sched.h>|g' "${KERNEL_DIR}/io_uring/io-wq.c"
+              sed -i 's|#include <linux/fadvise.h>|#include <uapi/linux/fadvise.h>|g' "${KERNEL_DIR}/io_uring/io_uring.c"
+              
+              cd "${TEMP_DIR}"
+              
+              curl -Lo uapi-linux.tar.gz "https://android.googlesource.com/kernel/common/+archive/refs/heads/android12-5.10/include/uapi/linux.tar.gz"
+              tar -xf uapi-linux.tar.gz
+              cp -f io_uring.h ${KERNEL_DIR}/include/uapi/linux/
+              rm -f io_uring.h
+              
+              curl -Lo trace-linux.tar.gz "https://android.googlesource.com/kernel/common/+archive/refs/heads/android12-5.10/include/trace/events/io_uring.tar.gz"
+              tar -xf trace-linux.tar.gz
+              cp -f io_uring.h ${KERNEL_DIR}/include/trace/events/
+              rm -f io_uring.h
+              
+              curl -Lo internal-linux.tar.gz "https://android.googlesource.com/kernel/common/+archive/refs/heads/anroid12-5.10/include/linux/io_uring.tar.gz"
+              tar -xf internal-linux.tar.gz
+              cp -f io_uring.h ${KERNEL_DIR}/include/linux/
+              rm -f io_uring.h
+              
+              cd ${GITHUB_WORKSPACE}
+              rm -rf "${TEMP_DIR}"
               
               cd gauguin
               curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s main || exit 1
