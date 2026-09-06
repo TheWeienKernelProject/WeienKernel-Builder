@@ -2,6 +2,13 @@ name: Compile Kernel PYS110
 
 on:
   workflow_dispatch:
+   inputs:
+      susfs:
+        description: "为本内核开启SuSFS支持"
+        required: true
+        type: boolean
+        default: false
+
 jobs:
   Kernel:
     env:
@@ -66,6 +73,20 @@ jobs:
               sed -i 's/task_uid(dst).val, rpc_type\[type\], -1/task_uid(dst).val/' drivers/rekernel/rekernel.c
               sed -i 's/%d\\n", netlink_unit/%lu\\n", netlink_unit/g; s/%d\\n", netlink_unit/%lu\\n", netlink_unit/g; s/%d", netlink_unit/%lu", netlink_unit/g' drivers/rekernel/rekernel.c
               sed -i 's/static const char\* rpc_type\[\]/static const char* rpc_type[] __attribute__((unused))/' drivers/rekernel/rekernel.c
+
+              if [[ "${{ inputs.susfs }}" == "true" ]]; then
+              git clone https://github.com/ReSukiSU/ReSukiSU --depth=1
+              cd ${GITHUB_WORKSPACE}/mt6878
+              bash ${GITHUB_WORKSPACE}/ReSukiSU/kernel/setup.sh
+              git clone https://gitlab.com/simonpunk/susfs4ksu/ -b gki-android14-6.1 --depth=1 susfs
+              cp susfs/kernel_patches/50_enable_susfs_for_ksu.patch KernelSU/
+              cd KernelSU
+              patch -p1 < 50_enable_susfs_for_ksu.patch 
+              cd ../
+              patch -p1 < susfs/kernel_patches/50_add_susfs_in_gki-android14-6.1.patch
+              cp susfs/kernel_patches/fs/* fs/
+              cp susfs/kernel_patches/include/linux/* include/linux/
+              fi
               
       - name: Make Confiig & Build Kernel Image
         run: |
@@ -78,6 +99,12 @@ jobs:
             
           cd mt6878
           make turbo6x-mt6878_defconfig
+          
+          if [[ "${{ inputs.susfs }}" == "true" ]]; then
+          sed -i '/CONFIG_KSU_SUSFS/d' .config
+          echo "CONFIG_KSU_SUSFS=y" >> .config
+          fi
+          
           make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
 
       - name: Make AnyKernel3
