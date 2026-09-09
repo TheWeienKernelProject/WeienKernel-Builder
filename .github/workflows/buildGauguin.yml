@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       backport:
-        description: "尝试backportIO_Uring开发者功能"
+        description: "尝试backportLandLock开发者功能"
         required: true
         type: boolean
         default: false
