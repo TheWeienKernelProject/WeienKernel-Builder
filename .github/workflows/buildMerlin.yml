@@ -6,7 +6,7 @@ jobs:
   Kernel:
     env:
         GH_TOKEN: ${{ github.token }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
       actions: read
