@@ -1,4 +1,4 @@
-name: Compile Kernel (pissarro)
+name: Compile Kernel (merlin)
 
 on:
   workflow_dispatch:
@@ -33,19 +33,25 @@ jobs:
           
       - name: Clone Kernel Source
         run: |
-          git clone https://github.com/liuweien339-sys/Xiaomi_Kernel_OpenSource pissarro --depth=1 -b main
+          git clone https://github.com/liuweien339-sys/Xiaomi_Kernel_OpenSource merlin --depth=1 -b mainline
           
-      - name: Download AOSP Clang
+      - name: Download AOSP Clang Gcc
         run: |
-          wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android12-release/clang-r416183b.tar.gz
+            curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android11-release/clang-r377782c.tar.gz
 
-          mkdir -p toolchains/clang-r416183b
+            mkdir -p toolchains/clang-r377782c
           
-          tar -xf "clang-r416183b.tar.gz" -C "toolchains/clang-r416183b" 
+            tar -xf "clang-r377782c.tar.gz" -C "toolchains/clang-r377782c" 
+
+            wget https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/heads/android11-release/aarch64-linux-android.tar.gz
+
+            mkdir -p toolchains/gcc
+          
+            tar -xf "aarch64-linux-android.tar.gz" -C "toolchains/gcc" 
 
       - name: Include goodies
         run: |
-              cd pissarro
+              cd merlin
               
               curl -LSs "https://raw.githubusercontent.com/backslashxx/KernelSU/refs/heads/master/kernel/setup.sh" | bash -s master
 
@@ -53,27 +59,29 @@ jobs:
          
       - name: Make Kernel Configs
         run: |
-          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r416183b/bin:$PATH"
+          export PATH="${GITHUB_WORKSPACE}/toolchains/gcc/bin:$PATH"
+          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r377782c/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64
           export LLVM=1
           export LLVM_IAS=0
           export CROSS_COMPILE=aarch64-linux-gnu-
 
-          cd pissarro
+          cd merlin
 
-          make pissarro_user_defconfig
+          make merlin_defconfig
           
       - name: Build Kernel Image
         run: |
-          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r416183b/bin:$PATH"
+          export PATH="${GITHUB_WORKSPACE}/toolchains/gcc/bin:$PATH"
+          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r377782c/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64
           export LLVM=1
           export LLVM_IAS=0
           export CROSS_COMPILE=aarch64-linux-gnu-
 
-          cd pissarro
+          cd merlin
           
           make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
           
@@ -81,7 +89,7 @@ jobs:
         run: |
           ZIP_NAME="kernel"
           git clone https://github.com/liuweien339-sys/AnyKernel3.git ak3
-          cp pissarro/arch/arm64/boot/Image ak3/
+          cp merlin/arch/arm64/boot/Image ak3/
           cp build.log ak3/
           cd ak3 
 
