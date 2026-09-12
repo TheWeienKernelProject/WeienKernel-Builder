@@ -1,14 +1,7 @@
 name: Compile Kernel (Gauguin)
 
 on:
-  workflow_dispatch:
-    inputs:
-      backport:
-        description: "尝试backportLandLock开发者功能"
-        required: true
-        type: boolean
-        default: false
-
+  workflow_dispatch: 
 jobs:
   Kernel:
     env:
@@ -40,11 +33,8 @@ jobs:
           
       - name: Clone Kernel Source
         run: |
-          if [[ "${{ inputs.backport }}" == "true" ]]; then
-          git clone https://github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_gauguin.git gauguin --depth=1 -b backport
-          else
           git clone https://github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_gauguin.git gauguin --depth=1 -b lineage-23.2-kernel2.0
-          fi
+          
       - name: Download AOSP Clang
         run: |
           curl -LO  https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android16-qpr2-release/clang-r563880c.tar.gz
@@ -106,10 +96,6 @@ jobs:
 
           make vendor/lito-perf_defconfig vendor/xiaomi/gauguin.config vendor/addon.config
 
-          if [[ "${{ inputs.backport }}" == "true" ]]; then
-          sed -i '/CONFIG_SECURITY_LANDLOCK/d' .config
-          echo "CONFIG_SECURITY_LANDLOCK=y" >> .config
-          fi
       - name: Build Kernel Image
         run: |
           export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r563880c/bin:$PATH"
