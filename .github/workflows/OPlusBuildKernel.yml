@@ -193,7 +193,6 @@ jobs:
 
           git clone "$kern_ws_m" -b "$kern_m_b" --depth=1 "$kern_m_n"
           
-          git clone https://${{ inputs.repo_host }}/${{ inputs.repo_name }}/${{ inputs.kernel_fomata }}_modules_and_devicetree_${{ inputs.brand }}_${{ inputs.soc }}.git -b ${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device_name }} --depth=1 ${{ inputs.soc }}-modules
           cp -r ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/kernel ${GITHUB_WORKSPACE}/
           cp -r ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/vendor ${GITHUB_WORKSPACE}/ 
           else
