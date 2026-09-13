@@ -208,11 +208,30 @@ jobs:
           
       - name: Download AOSP Clang
         run: |
-          curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/${{ inputs.android_version }}-release/clang-stable.tar.gz
+          if [ "${{ inputs.android_version }}" -lt 10 ]; then
+          echo "ERR: Sorry Now this workflow is not support small than android10"
+          exit 1
+          elif [ "${{ inputs.android_version }}" == 10 ]; then
+          curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983b.tar.gz
+          elif [ "${{ inputs.android_version }}" == 11 ]; then
+          curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android11-release/clang-r377782c.tar.gz
+          elif [ "${{ inputs.android_version }}" == 12 ]; then
+          curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android12-release/clang-r416183b.tar.gz
+          elif [ "${{ inputs.android_version }}" == 13 ]; then
+          curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android13-release/clang-r450784e.tar.gz
+          elif [ "${{ inputs.android_version }}" == 14 ]; then
+          curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-release/clang-r487747.tar.gz
+          elif [ "${{ inputs.android_version }}" == 15 ]; then
+          curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android15-release/clang-r522817.tar.gz
+          elif [ "${{ inputs.android_version }}" == 16 ]; then
+          curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android16-release/clang-r547379.tar.gz
+          elif [ "${{ inputs.android_version }}" == 17 ]; then
+          curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android17-release/clang-r584948.tar.gz
+          fi
 
           mkdir -p toolchains/clang
           
-          tar -xf "clang-stable.tar.gz" -C "toolchains/clang" || exit 1
+          tar -xf "clang.tar.gz" -C "toolchains/clang" || exit 1
 
           if [[ "${{ inputs.enable_gcc_32bits }}" == "true" ]]; then
 
