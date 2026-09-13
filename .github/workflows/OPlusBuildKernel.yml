@@ -61,11 +61,24 @@ on:
         default: ""
         
       android_version:
-        description: "请选择设备底层安卓版本 Please Input Your device android version"
+        description: "请选择设备底层安卓版本 Please Choose Your device android version"
         required: true
-        type: string
+        type: choice
         default: ""
-        
+        options:
+          - android10
+          - android11
+          - android12
+          - android13
+          - android14
+          - android14-qpr2
+          - android15
+          - android15-qpr2
+          - android16
+          - android16-qpr2
+          - android17
+          # 由于Android14以前的qpr2版本使用的clang和qpr0一样 所以不予判断
+    
       kernel_configs:
         description: " 内核配置(config)路径 不要写arch/arm64/configs Kernel Config Folder Dont need arch/arm64/configs"
         required: true
@@ -208,24 +221,28 @@ jobs:
           
       - name: Download AOSP Clang
         run: |
-          if [ "${{ inputs.android_version }}" -lt 10 ]; then
-          echo "ERR: Sorry Now this workflow is not support small than android10"
-          exit 1
-          elif [ "${{ inputs.android_version }}" == 10 ]; then
+          # 由于Android14以前的qpr2版本使用的clang和qpr0一样 所以不予判断
+          elif [ "${{ inputs.android_version }}" == android10 ]; then
           curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983b.tar.gz
-          elif [ "${{ inputs.android_version }}" == 11 ]; then
+          elif [ "${{ inputs.android_version }}" == android11 ]; then
           curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android11-release/clang-r377782c.tar.gz
-          elif [ "${{ inputs.android_version }}" == 12 ]; then
+          elif [ "${{ inputs.android_version }}" == android12 ]; then
           curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android12-release/clang-r416183b.tar.gz
-          elif [ "${{ inputs.android_version }}" == 13 ]; then
+          elif [ "${{ inputs.android_version }}" == android13 ]; then
           curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android13-release/clang-r450784e.tar.gz
-          elif [ "${{ inputs.android_version }}" == 14 ]; then
+          elif [ "${{ inputs.android_version }}" == android14 ]; then
           curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-release/clang-r487747.tar.gz
-          elif [ "${{ inputs.android_version }}" == 15 ]; then
+          elif [ "${{ inputs.android_version }}" == android14-qpr2 ]; then
+          curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-qpr2-release/clang-r498229b.tar.gz
+          elif [ "${{ inputs.android_version }}" == android15 ]; then
           curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android15-release/clang-r522817.tar.gz
-          elif [ "${{ inputs.android_version }}" == 16 ]; then
+          elif [ "${{ inputs.android_version }}" == android15-qpr2 ]; then
+          curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android15-qpr2-release/clang-r530567.tar.gz
+          elif [ "${{ inputs.android_version }}" == android16 ]; then
           curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android16-release/clang-r547379.tar.gz
-          elif [ "${{ inputs.android_version }}" == 17 ]; then
+          elif [ "${{ inputs.android_version }}" == android16-qpr2 ]; then
+          curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android16-qpr2-release/clang-r563880.tar.gz
+          elif [ "${{ inputs.android_version }}" == android17 ]; then
           curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android17-release/clang-r584948.tar.gz
           fi
 
