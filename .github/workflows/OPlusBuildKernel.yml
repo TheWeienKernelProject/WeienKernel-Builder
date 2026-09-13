@@ -67,7 +67,7 @@ on:
         default: ""
         
       kernel_configs:
-        description: " 内核配置(config)路径 Kernel Config Folder"
+        description: " 内核配置(config)路径 不要写arch/arm64/configs Kernel Config Folder Dont need arch/arm64/configs"
         required: true
         type: string
         default: ""
@@ -184,6 +184,15 @@ jobs:
 
       - name: Clone Kernel Source
         run: |
+
+          kern_ws="https://${{ inputs.repo_host }}/${{ inputs.repo_name }}/${{ inputs.kernel_fomata }}_${{ inputs.brand }}_${{ inputs.soc }}.git"
+
+          kern_b="${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device_name }}"
+
+          kern_n="${{ inputs.soc }}"
+
+          git clone "$kern_ws" -b "$kern_b" --depth=1 "$kern_n"
+     
           if [[ "${{ inputs.has_modules_repo }}" == "true" ]]; then
           kern_ws_m="https://${{ inputs.repo_host }}/${{ inputs.repo_name }}/${{ inputs.kernel_fomata }}_modules_and_devicetree_${{ inputs.brand }}_${{ inputs.soc }}.git"
 
@@ -195,14 +204,6 @@ jobs:
           
           cp -r ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/kernel ${GITHUB_WORKSPACE}/
           cp -r ${GITHUB_WORKSPACE}/${{ inputs.soc }}-modules/vendor ${GITHUB_WORKSPACE}/ 
-          else
-          kern_ws="https://${{ inputs.repo_host }}/${{ inputs.repo_name }}/${{ inputs.kernel_fomata }}_${{ inputs.brand }}_${{ inputs.soc }}.git"
-
-          kern_b="${{ inputs.brand }}/${{ inputs.soc }}_${{ inputs.partition_type }}_${{ inputs.system_version }}_${{ inputs.device_name }}"
-
-          kern_n="${{ inputs.soc }}"
-
-          git clone "$kern_ws" -b "$kern_b" --depth=1 "$kern_n"
           fi
           
       - name: Download AOSP Clang
@@ -250,7 +251,7 @@ jobs:
               ;;
           
             # Include DroidSpaces
-            # That's Reference Linux3141 Workflow and do some modified
+            # That's Reference Linx3141 Workflow and do some modified
             patch_6_12="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/kernel-6.12/001.GKI-6.12-or-above-fix_sysvipc_kabi.patch"
             patch_6_12_below="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch"
             patch_5_10_or_below="https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/002.5.10_or_lower_use_android_abi_padding_for_posix_mqueue.patch"
@@ -302,7 +303,7 @@ jobs:
            ui_print "Skiped Nomount"
            fi
            # Include SuSFS
-           # That's Reference Linux3141 Workflow and do some modified
+           # That's Reference Linx3141 Workflow and do some modified
            if [[ "${{ inputs.ksu_type }}" == *susfs* ]]; then
 
             if [[ "${{ inputs.susfs-gki }}" == "None" && "${{ inputs.susfs-nongki }}" == "None" ]]; then
@@ -335,11 +336,16 @@ jobs:
       - name: Make Kernel Configs
         run: |
           configf="${GITHUB_WORKSPACE}/arch/arm64/configs/"
-          export PATH="${GITHUB_WORKSPACE}/toolchains/${{ inputs.clang_version }}/bin:$PATH"
+          export PATH="${GITHUB_WORKSPACE}/toolchains/"*/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64
           export LLVM=1
+          if [ "${{ inputs.android_version }}" -gt 10 ]; then
           export LLVM_IAS=1
+          else
+          export LLVM_IAS=0
+          fi
+
 
           if [[ "${{ inputs.enable_gcc }}" == "true" ]]; then
 
@@ -358,7 +364,7 @@ jobs:
           if [[ -f "$dsconfigf/ds_gki.config" ]]; then
           make ${{ inputs.kernel_configs }} ds_gki.config
           elif [[ -f "$dsconfigf/ds_ngki.config" ]]; then
-          make ${{ inputs.kernel_config }} ds_ngki.config
+          make ${{ inputs.kernel_configs }} ds_ngki.config
           else
           make ${{ inputs.kernel_configs }} 
           fi
@@ -371,13 +377,19 @@ jobs:
           else
           ui_print "Skiped SuSFS"
           fi
+          
       - name: Build Kernel Image
         run: |
-          export PATH="${GITHUB_WORKSPACE}/toolchains/${{ inputs.clang_version }}/bin:$PATH"
+          export PATH="${GITHUB_WORKSPACE}/toolchains/"*/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64
           export LLVM=1
+          if [ "${{ inputs.android_version }}" -gt 10 ]; then
           export LLVM_IAS=1
+          else
+          export LLVM_IAS=0
+          fi
+
 
           if [[ "${{ inputs.enable_gcc }}" == "true" ]]; then
 
