@@ -48,6 +48,12 @@ jobs:
               
       - name: Make Config
         run: |
+          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r487747c/bin:$PATH"
+          export ARCH=arm64
+          export SUBARCH=arm64
+          export LLVM=1
+          export LLVM_IAS=1
+          export CROSS_COMPILE=aarch64-linux-gnu-
           
           cd mt6878
           make turbo6x-mt6878_defconfig
