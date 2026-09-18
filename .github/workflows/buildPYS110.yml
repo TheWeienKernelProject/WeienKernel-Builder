@@ -59,16 +59,16 @@ jobs:
               curl -Lo ds.patch https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch
               patch -p1 < ds.patch || true
 
-              # cd ${GITHUB_WORKSPACE}
+              cd ${GITHUB_WORKSPACE}
               # git clone https://github.com/Sakion-Team/Re-Kernel/ -b main --depth=1
-              # git clone https://github.com/maxsteeel/nomount/ -b master --depth=1
-              # mkdir ${GITHUB_WORKSPACE}/mt6878/fs/nomount
+              git clone https://github.com/maxsteeel/nomount/ -b master --depth=1
+              mkdir ${GITHUB_WORKSPACE}/mt6878/fs/nomount
               # mkdir ${GITHUB_WORKSPACE}/mt6878/drivers/rekernel
               # cp ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/rekernel/* ${GITHUB_WORKSPACE}/mt6878/drivers/rekernel
-              # cp ${GITHUB_WORKSPACE}/nomount/kernel/src/* ${GITHUB_WORKSPACE}/mt6878/fs/nomount
-              # cd ${GITHUB_WORKSPACE}/mt6878/
+              cp ${GITHUB_WORKSPACE}/nomount/kernel/src/* ${GITHUB_WORKSPACE}/mt6878/fs/nomount
+              cd ${GITHUB_WORKSPACE}/mt6878/
               # bash ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/patches.sh 
-              # bash ${GITHUB_WORKSPACE}/nomount/kernel/setup.sh 
+              bash ${GITHUB_WORKSPACE}/nomount/kernel/setup.sh 
               # sed -i 's/%d\([^"]*netlink_unit\)/%lu\1/g' drivers/rekernel/rekernel.c
               # sed -i 's/task_uid(dst).val, rpc_type\[type\], -1/task_uid(dst).val/' drivers/rekernel/rekernel.c
               # sed -i 's/%d\\n", netlink_unit/%lu\\n", netlink_unit/g; s/%d\\n", netlink_unit/%lu\\n", netlink_unit/g; s/%d", netlink_unit/%lu", netlink_unit/g' drivers/rekernel/rekernel.c
@@ -98,7 +98,7 @@ jobs:
           export CROSS_COMPILE=aarch64-linux-gnu-
             
           cd mt6878
-          make PYS110_defconfig
+          make PYS110_defconfig other.config
           
           if [[ "${{ inputs.susfs }}" == "true" ]]; then
           sed -i '/CONFIG_KSU_SUSFS/d' .config
