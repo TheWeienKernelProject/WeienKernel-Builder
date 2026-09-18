@@ -96,7 +96,9 @@ jobs:
           export LLVM=1
           export LLVM_IAS=1
           export CROSS_COMPILE=aarch64-linux-gnu-
-            
+          export KBUILD_BUILD_USER="twkp" 
+          export KBUILD_BUILD_HOST="liuweien339-sys"
+          
           cd mt6878
           make PYS110_defconfig other.config
           
