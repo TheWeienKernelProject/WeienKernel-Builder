@@ -34,7 +34,7 @@ jobs:
       - name: Clone Kernel Source
         run: |
           git clone https://github.com/liuweien339-sys/android_kernel_oppo_mt6771.git --depth=1 mt6771
-          git clone https://github.com/oppo-source/android_kernel_modules_oppo_mt6771.git --depth=1 mt6771-modules
+          git clone https://github.com/liuweien339-sys/android_kernel_modules_oppo_mt6771.git --depth=1 mt6771-modules
           cp -r ${GITHUB_WORKSPACE}/mt6771-modules/source/vendor ${GITHUB_WORKSPACE}/ 
           
       - name: Download AOSP Clang
@@ -62,8 +62,6 @@ jobs:
           export KBUILD_BUILD_HOST="liuweien339-sys"
           
           cd mt6771
-
-          sed -i '426s/-Werror-implicit-function-declaration/-Wno-error/' Makefile
 
           make oppo6771_defconfig
           
