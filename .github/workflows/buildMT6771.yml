@@ -6,7 +6,7 @@ jobs:
   Kernel:
     env:
         GH_TOKEN: ${{ github.token }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
       actions: read
@@ -36,6 +36,7 @@ jobs:
           git clone https://github.com/oppo-source/android_kernel_oppo_mt6771.git --depth=1 mt6771
           git clone https://github.com/oppo-source/android_kernel_modules_oppo_mt6771.git --depth=1 mt6771-modules
           cp ${GITHUB_WORKSPACE}/mt6771-modules/source/vendor ${GITHUB_WORKSPACE}/ 
+          
       - name: Download AOSP Clang
         run: |
               curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983b.tar.gz
@@ -54,7 +55,7 @@ jobs:
           export PATH="${GITHUB_WORKSPACE}/toolchains/gcc/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64
-          export LLVM=1
+          export LLVM=0
           export LLVM_IAS=0
           export CROSS_COMPILE=aarch64-linux-gnu-
           export KBUILD_BUILD_USER="twkp" 
