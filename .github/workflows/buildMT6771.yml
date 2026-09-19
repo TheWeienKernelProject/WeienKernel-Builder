@@ -34,7 +34,8 @@ jobs:
       - name: Clone Kernel Source
         run: |
           git clone https://github.com/oppo-source/android_kernel_oppo_mt6771.git --depth=1 mt6771
-
+          git clone https://github.com/oppo-source/android_kernel_modules_oppo_mt6771.git --depth=1 mt6771-modules
+          cp ${GITHUB_WORKSPACE}/mt6771-modules/source/vendor ${GITHUB_WORKSPACE}/ 
       - name: Download AOSP Clang
         run: |
               curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983b.tar.gz
