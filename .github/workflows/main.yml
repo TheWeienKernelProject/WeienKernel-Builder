@@ -59,7 +59,7 @@ jobs:
               bash ${GITHUB_WORKSPACE}/ReSukiSU/kernel/setup.sh
               git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android14-6.1 --depth=1 susfs
               cd susfs
-              cp KernelSU/10_enable_susfs_for_ksu.patch ${GITHUB_WORKSPACE}/mt6878
+              cp kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ${GITHUB_WORKSPACE}/mt6878
               cp 50_add_susfs_in_gki-android14-6.1.patch ${GITHUB_WORKSPACE}/mt6878
               cp kernel_patches/fs/* ${GITHUB_WORKSPACE}/mt6878/fs
               cp kernel_patches/include/linux/* ${GITHUB_WORKSPACE}/mt6878/include/linux/
