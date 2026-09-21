@@ -51,12 +51,8 @@ jobs:
               cd mt6878
               curl -Lo ds.patch https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch
               patch -p1 < ds.patch || true
-
-              cd ${GITHUB_WORKSPACE}
-
-              git clone https://github.com/ReSukiSU/ReSukiSU --depth=1
-              cd ${GITHUB_WORKSPACE}/mt6878
-              bash ${GITHUB_WORKSPACE}/ReSukiSU/kernel/setup.sh
+              curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash
+              
               git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android14-6.1 --depth=1 susfs
               cd susfs
               cp kernel_patches/50_add_susfs_in_gki-android14-6.1.patch ${GITHUB_WORKSPACE}/mt6878
