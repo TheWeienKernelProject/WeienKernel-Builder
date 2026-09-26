@@ -49,7 +49,7 @@ jobs:
               curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s main || exit 1
               sed -i '171s/error/warning/g' drivers/kernelsu/Kbuild
               sed -i '82s/-dirty//g' drivers/kernelsu/Kbuild
-              curl -Lo susfs.patch https://raw.githubusercontent.com/liuweien339-sys/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/fixup_sus_patch_gauguin_los23.2.patch || exit 1
+              curl -Lo susfs.patch https://raw.githubusercontent.com/liuweien339-sys/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/gauguin_susfs.patch || exit 1
               curl -Lo inline.sh https://raw.githubusercontent.com/liuweien339-sys/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh || exit 1
 
               patch -p1 < susfs.patch
