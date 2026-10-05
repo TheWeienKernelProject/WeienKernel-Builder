@@ -59,7 +59,7 @@ jobs:
          
       - name: Make Kernel Configs & Build
         run: |
-          export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r450784d/bin:$PATH"
+          export PATH="${GITHUB_WORKSPACE}/toolchains/clang/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64
           export LLVM=1
