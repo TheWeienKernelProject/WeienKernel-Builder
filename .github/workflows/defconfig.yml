@@ -72,8 +72,8 @@ jobs:
             export KBUILD_BUILD_USER="twkp" 
             export KBUILD_BUILD_HOST="liuweien339-sys"
           
-            git clone https://github.com/TheWeienKernelProject/WeienKernel-Builder.git -b Integrate --depth=1
-            cp ${GITHUB_WORKSPACE}/Integrate/.config ${GITHUB_WORKSPACE}/mt6878
+            git clone https://github.com/TheWeienKernelProject/WeienKernel-Builder.git -b Integrate --depth=1 build
+            cp ${GITHUB_WORKSPACE}/build/.config ${GITHUB_WORKSPACE}/mt6878
             cd mt6878
             
             make savedefconfig
