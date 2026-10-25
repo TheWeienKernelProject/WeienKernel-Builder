@@ -59,7 +59,9 @@ jobs:
               cp kernel_patches/fs/* ${GITHUB_WORKSPACE}/mt6878/fs
               cp kernel_patches/include/linux/* ${GITHUB_WORKSPACE}/mt6878/include/linux/
               cd ${GITHUB_WORKSPACE}/mt6878
-              patch -p1 < 50_add_susfs_in_gki-android14-6.1.patch || true
+              # because kernel api issues 6.1.157 dont have (trace/hooks/blk.h) so delete some codeblock
+              sed -i '642s/.\{11\}/10/; 642s/.\{21\}/20/; 652d' susfs/kernel_patches/50_add_susfs_in_gki-android14-6.1.patch
+              patch -p1 < 50_add_susfs_in_gki-android14-6.1.patch
               
       - name: Build Kernel Make config
         run: |
