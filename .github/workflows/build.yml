@@ -159,18 +159,16 @@ jobs:
              make device_build_defconfig addon.config
           fi
           
-             make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
-          - name: Make AnyKernel3
+              make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
+      - name: Make AnyKernel3
         run: |
-          ZIP_NAME="Kernel"
-          git clone https://github.com/liuweien339-sys/AnyKernel3.git ak3
-          if [[ "${{ inputs.gauguin }}" == "true" ]]; then
-            cp gauguin/arch/arm64/boot/Image ak3/
-          else
-            cp mt6878/arch/arm64/boot/Image ak3/
-          fi
-          
-          cp build.log ak3/
-          cd ak3 
-
-          zip -r9 ../"${ZIP_NAME}.zip" * -x .git
+            ZIP_NAME="Kernel"
+            git clone https://github.com/liuweien339-sys/AnyKernel3.git ak3
+            if [[ "${{ inputs.gauguin }}" == "true" ]]; then
+               cp gauguin/arch/arm64/boot/Image ak3/
+            else
+               cp mt6878/arch/arm64/boot/Image ak3/
+            fi   
+            cp build.log ak3/
+            cd ak3 
+            zip -r9 ../"${ZIP_NAME}.zip" * -x .git
