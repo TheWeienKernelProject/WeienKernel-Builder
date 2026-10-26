@@ -1,0 +1,176 @@
+name: WeienKernel Smart Build Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+       gauguin:
+         description: "构建gauguin内核 (已不再更新) Build-gauguin-kernel(stop update)"
+         required: true
+         type: boolean
+         default: false
+        
+       t6xmain:
+         description: "构建PYS110内核(主线) Build-pys110-kernel(main branch)"
+         required: true
+         type: boolean
+         default: false
+        
+       t6x:
+         description: "构建PYS110内核(非主线) Build-pys110-kernel(non main branch)"
+         required: true
+         type: boolean
+         default: false
+        
+jobs:
+  BuildKernel:
+    env:
+        GH_TOKEN: ${{ github.token }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+      checks: read
+    steps:
+      - uses: actions/checkout@v7
+      
+      - name: Setup SWAP
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 16
+          
+      - name: Install build dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+          libssl-dev \
+          libelf-dev \
+          libdw-dev \
+          build-essential \
+          dwarves \
+          gcc-aarch64-linux-gnu \
+          linux-tools-common 
+          
+      - name: Clone Kernel Source
+        run: |
+          if [[ "${{ inputs.gauguin }}" == "true" ]]; then
+            git clone https://github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_gauguin.git gauguin --depth=1 -b lineage-23.2-kernel2.0
+          fi
+          
+          if [[ "${{ inputs.t6xmain }}" == "true" ]]; then
+            git clone https://github.com/liuweien339-sys/android_kernel_oneplus_mt6878.git --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x mt6878            
+            git clone https://github.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_mt6878 --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x modules
+            cp -r ${GITHUB_WORKSPACE}/modules/vendor ${GITHUB_WORKSPACE}/ 
+            cp -r ${GITHUB_WORKSPACE}/modules/kernel ${GITHUB_WORKSPACE}/
+          fi
+          
+          if [[ "${{ inputs.t6x }}" == "true" ]]; then
+            git clone https://github.com/TheWeienKernelProject/android_WeienKernel_oneplus_mt6878.git --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x mt6878
+            git clone https://github.com/TheWeienKernelProject/android_WeienKernel_modules_and_devicetree_oneplus_mt6878 --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x modules
+            cp -r ${GITHUB_WORKSPACE}/modules/vendor ${GITHUB_WORKSPACE}/ 
+            cp -r ${GITHUB_WORKSPACE}/modules/kernel ${GITHUB_WORKSPACE}/
+          fi
+          
+      - name: Download Clang Toolchain
+        run: |
+          if [[ "${{ inputs.gauguin }}" == "true" ]]; then
+          curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android16-qpr2-release/clang-r563880c.tar.gz
+          mkdir -p toolchains/clang-r563880c
+          tar -xf "clang-r563880c.tar.gz" -C "toolchains/clang-r563880c" 
+          
+          else
+          
+          curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-qpr3-release/clang-r487747c.tar.gz
+          mkdir -p toolchains/clang-r487747c      
+          tar -xf "clang-r487747c.tar.gz" -C "toolchains/clang-r487747c"
+          fi
+      
+      - name: Include goodies
+        run: |
+          curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s main  
+          if [[ "${{ inputs.gauguin }}" == "true" ]]; then
+            sed -i '171s/error/warning/g' drivers/kernelsu/Kbuild
+            sed -i '82s/-dirty//g' drivers/kernelsu/Kbuild
+            curl -Lo susfs.patch https://raw.githubusercontent.com/liuweien339-sys/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/gauguin_susfs.patch || exit 1
+            curl -Lo inline.sh https://raw.githubusercontent.com/liuweien339-sys/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh || exit 1
+            patch -p1 < susfs.patch
+            bash inline.sh       
+            cd ${GITHUB_WORKSPACE}/
+            git clone https://github.com/Sakion-Team/Re-Kernel/ -b main --depth=1
+            git clone https://github.com/maxsteeel/nomount/ -b master --depth=1
+            mkdir ${GITHUB_WORKSPACE}/gauguin/fs/nomount
+            mkdir ${GITHUB_WORKSPACE}/gauguin/drivers/rekernel
+            cp ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/rekernel/* ${GITHUB_WORKSPACE}/gauguin/drivers/rekernel
+            cp ${GITHUB_WORKSPACE}/nomount/kernel/src/* ${GITHUB_WORKSPACE}/gauguin/fs/nomount
+            cd ${GITHUB_WORKSPACE}/gauguin/
+            bash ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/patches.sh 
+            bash ${GITHUB_WORKSPACE}/nomount/kernel/setup.sh     
+          else
+            cd ${GITHUB_WORKSPACE}/mt6878
+            curl -Lo ds.patch https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch
+            patch -p1 < ds.patch || true
+
+            cd ${GITHUB_WORKSPACE}
+            git clone https://github.com/maxsteeel/nomount/ -b master --depth=1
+            mkdir ${GITHUB_WORKSPACE}/mt6878/fs/nomount
+            cp ${GITHUB_WORKSPACE}/nomount/kernel/src/* ${GITHUB_WORKSPACE}/mt6878/fs/nomount
+            cd ${GITHUB_WORKSPACE}/mt6878/
+            bash ${GITHUB_WORKSPACE}/nomount/kernel/setup.sh 
+          fi
+            
+          if [[ "${{ inputs.t6xmain }}" == "true" ]]; then
+            git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android14-6.1 --depth=1 susfs
+            cd susfs
+            cp kernel_patches/50_add_susfs_in_gki-android14-6.1.patch ${GITHUB_WORKSPACE}/mt6878
+            cp kernel_patches/fs/* ${GITHUB_WORKSPACE}/mt6878/fs
+            cp kernel_patches/include/linux/* ${GITHUB_WORKSPACE}/mt6878/include/linux/
+            cd ${GITHUB_WORKSPACE}/mt6878
+            # because kernel api issues 6.1.157 dont have (trace/hooks/blk.h) so delete some codeblock
+            sed -i '642s/@@ -32,11 +32,21 @@/@@ -32,10 +32,20 @@/; 652d' 50_add_susfs_in_gki-android14-6.1.patch
+            patch -p1 < 50_add_susfs_in_gki-android14-6.1.patch
+          fi
+              
+      - name: Build Kernel
+        run: |
+          if [[ "${{ inputs.gauguin }}" == "true" ]]; then
+            export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r567880c/bin:$PATH"            
+          else
+            export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r487747c/bin:$PATH"
+          fi
+            export ARCH=arm64
+            export SUBARCH=arm64
+            export LLVM=1
+            export LLVM_IAS=1
+            export CROSS_COMPILE=aarch64-linux-gnu-
+            export KBUILD_BUILD_USER="twkp" 
+            export KBUILD_BUILD_HOST="liuweien339-sys"
+          
+          if [[ "${{ inputs.gauguin }}" == "true" ]]; then
+            cd ${GITHUB_WORKSPACE}/gauguin
+            make vendor/lito-perf_defconfig vendor/xiaomi/gauguin.config vendor/addon.config
+          fi
+            
+          if [[ "${{ inputs.t6x }}" == "true" ]]; then
+            cd ${GITHUB_WORKSPACE}/mt6878
+            make PYS110_defconfig other.config  
+          fi
+            
+          if [[ "${{ inputs.t6xmain }}" == "true" ]]; then
+             cd ${GITHUB_WORKSPACE}/mt6878
+             make device_build_defconfig addon.config
+          fi
+          
+             make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
+          - name: Make AnyKernel3
+        run: |
+          ZIP_NAME="Kernel"
+          git clone https://github.com/liuweien339-sys/AnyKernel3.git ak3
+          if [[ "${{ inputs.gauguin }}" == "true" ]]; then
+            cp gauguin/arch/arm64/boot/Image ak3/
+          else
+            cp mt6878/arch/arm64/boot/Image ak3/
+          fi
+          
+          cp build.log ak3/
+          cd ak3 
+
+          zip -r9 ../"${ZIP_NAME}.zip" * -x .git
