@@ -86,8 +86,14 @@ jobs:
       
       - name: Include goodies
         run: |
+          if [[ "${{ inputs.gauguin }}" == "true" ]]; then
+            cd gauguin
+          else
+            cd mt6878
+          fi
           curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s main  
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
+            cd gauguin
             sed -i '171s/error/warning/g' drivers/kernelsu/Kbuild
             sed -i '82s/-dirty//g' drivers/kernelsu/Kbuild
             curl -Lo susfs.patch https://raw.githubusercontent.com/liuweien339-sys/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/gauguin_susfs.patch || exit 1
