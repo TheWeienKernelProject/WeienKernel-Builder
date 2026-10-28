@@ -4,19 +4,19 @@ on:
   workflow_dispatch:
     inputs:
        gauguin:
-         description: "构建gauguin内核 (已不再更新) Build-gauguin-kernel(stop update)"
+         description: "构建gauguin内核 (已不再更新) Compile-gauguin-kernel(stop update)"
          required: true
          type: boolean
          default: false
         
        t6xmain:
-         description: "构建PYS110内核(主线) Build-pys110-kernel(main branch)"
+         description: "构建PYS110内核(SuSFS分支) Compile-pys110-kernel(susfs branch)"
          required: true
          type: boolean
          default: false
         
        t6x:
-         description: "构建PYS110内核(非主线) Build-pys110-kernel(non main branch)"
+         description: "构建PYS110内核(主线分支) Compile-pys110-kernel(main branch)"
          required: true
          type: boolean
          default: false
@@ -73,16 +73,14 @@ jobs:
       - name: Download Clang Toolchain
         run: |
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
-          curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android16-qpr2-release/clang-r563880c.tar.gz
-          mkdir -p toolchains/clang-r563880c
-          tar -xf "clang-r563880c.tar.gz" -C "toolchains/clang-r563880c" 
-          
+             curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android16-qpr2-release/clang-r563880c.tar.gz
+             mkdir -p toolchains/clang-r563880c
+             tar -xf "clang-r563880c.tar.gz" -C "toolchains/clang-r563880c"    
           else
-          
-          curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-qpr3-release/clang-r487747c.tar.gz
-          mkdir -p toolchains/clang-r487747c      
-          tar -xf "clang-r487747c.tar.gz" -C "toolchains/clang-r487747c"
-          fi
+             curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-qpr3-release/clang-r487747c.tar.gz
+             mkdir -p toolchains/clang-r487747c      
+             tar -xf "clang-r487747c.tar.gz" -C "toolchains/clang-r487747c"
+             fi
       
       - name: Include goodies
         run: |
@@ -151,24 +149,16 @@ jobs:
             export KBUILD_BUILD_HOST="liuweien339-sys"
           
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
-            cd ${GITHUB_WORKSPACE}/gauguin
-            make vendor/lito-perf_defconfig vendor/xiaomi/gauguin.config vendor/addon.config
-          fi
-            
-          if [[ "${{ inputs.t6x }}" == "true" ]]; then
-            cd ${GITHUB_WORKSPACE}/mt6878
-            make PYS110_defconfig other.config  
-          fi
-            
-          if [[ "${{ inputs.t6xmain }}" == "true" ]]; then
+             cd ${GITHUB_WORKSPACE}/gauguin
+             make vendor/lito-perf_defconfig vendor/xiaomi/gauguin.config vendor/addon.config
+          else
              cd ${GITHUB_WORKSPACE}/mt6878
              make device_build_defconfig addon.config
-          fi
           
               make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
       - name: Make AnyKernel3
         run: |
-            ZIP_NAME="Kernel"
+            ZIP_NAME="BuildSummary"
             git clone https://github.com/liuweien339-sys/AnyKernel3.git ak3
             if [[ "${{ inputs.gauguin }}" == "true" ]]; then
                cp gauguin/arch/arm64/boot/Image ak3/
