@@ -162,7 +162,7 @@ jobs:
             
           if [[ "${{ inputs.t6xmain }}" == "true" ]]; then
              cd ${GITHUB_WORKSPACE}/mt6878
-             make device_build_defconfig addon.config
+             make device_build_defconfig 
           fi
           
               make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
