@@ -178,3 +178,12 @@ jobs:
             cp build.log ak3/
             cd ak3 
             zip -r9 ../"${ZIP_NAME}.zip" * -x .git
+            
+      - name: Upload to GitHub Actions Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+         name: Kernel
+         path: |
+          ak3/*
+         if-no-files-found: error
+         compression-level: 6
