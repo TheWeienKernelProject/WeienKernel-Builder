@@ -156,8 +156,9 @@ jobs:
           else
              cd ${GITHUB_WORKSPACE}/mt6878
              make device_build_defconfig addon.config
+          fi
           
-              make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
+             make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
       - name: Make AnyKernel3
         run: |
             ZIP_NAME="BuildSummary"
