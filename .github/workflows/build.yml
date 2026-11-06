@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
        gauguin:
-         description: "构建gauguin内核 (已不再更新) Compile-gauguin-kernel(stop update)"
+         description: "构建gauguin内核 (不会测试) Compile-gauguin-kernel(non test)"
          required: true
          type: boolean
          default: false
@@ -53,7 +53,7 @@ jobs:
       - name: Clone Kernel Source
         run: |
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
-            git clone https://github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_gauguin.git gauguin --depth=1 -b lineage-23.2-kernel2.0
+            git clone https://github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_gauguin.git gauguin --depth=1 -b lineage-24.0-new!
           fi
           
           if [[ "${{ inputs.t6xmain }}" == "true" ]]; then
@@ -73,9 +73,9 @@ jobs:
       - name: Download Clang Toolchain
         run: |
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
-             curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android16-qpr2-release/clang-r563880c.tar.gz
-             mkdir -p toolchains/clang-r563880c
-             tar -xf "clang-r563880c.tar.gz" -C "toolchains/clang-r563880c"    
+             curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android17-release/clang-r584948.tar.gz
+             mkdir -p toolchains/clang-r584948
+             tar -xf "clang-r584948.tar.gz" -C "toolchains/clang-r584948"    
           else
              curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-qpr3-release/clang-r487747c.tar.gz
              mkdir -p toolchains/clang-r487747c      
@@ -94,8 +94,8 @@ jobs:
             cd gauguin
             sed -i '171s/error/warning/g' drivers/kernelsu/Kbuild
             sed -i '82s/-dirty//g' drivers/kernelsu/Kbuild
-            curl -Lo susfs.patch https://raw.githubusercontent.com/liuweien339-sys/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/gauguin_susfs.patch || exit 1
-            curl -Lo inline.sh https://raw.githubusercontent.com/liuweien339-sys/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh || exit 1
+            curl -Lo susfs.patch https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/susfs_patch_to_4.19.patch || exit 1
+            curl -Lo inline.sh https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh || exit 1
             patch -p1 < susfs.patch
             bash inline.sh       
             cd ${GITHUB_WORKSPACE}/
@@ -138,7 +138,7 @@ jobs:
       - name: Build Kernel
         run: |
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
-            export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r567880c/bin:$PATH"            
+            export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r584948/bin:$PATH"            
           else
             export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r487747c/bin:$PATH"
           fi
