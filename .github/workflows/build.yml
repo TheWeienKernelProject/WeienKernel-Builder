@@ -132,8 +132,12 @@ jobs:
             patch -p1 < 50_add_susfs_in_gki-android14-6.1.patch
             sed -i '/^config LSM$/,/^help$/{ /^[[:space:]]*default/ { /baseband_guard/! s/selinux/selinux,baseband_guard/ } }' security/Kconfig
             wget -O- https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh | bash
+            git clone https://github.com/liuweien339-sys/OffModeCharger.git -b android14-6.1.157 omc
+            mkdir drivers/power/supply/offmode_charger
+            cp ocm/src/drivers/power/supply/offmode_charger/* drivers/power/supply/offmode_charger
+            cp ocm/src/include/linux/offmode_charger.h include/linux
+            patch -p1 < ocm/patches/0001-power-supply-wire-offmode-charger.patch 
           fi
-              
       - name: Build Kernel
         run: |
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
