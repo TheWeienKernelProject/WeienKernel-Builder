@@ -134,9 +134,9 @@ jobs:
             wget -O- https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh | bash
             git clone https://github.com/liuweien339-sys/OffModeCharger.git -b android14-6.1.157 omc
             mkdir drivers/power/supply/offmode_charger
-            cp -r ocm/src/drivers/power/supply/offmode_charger/* drivers/power/supply/offmode_charger
-            cp -r ocm/src/include/linux/offmode_charger.h include/linux
-            patch -p1 < ocm/patches/0001-power-supply-wire-offmode-charger.patch 
+            cp -r omc/src/drivers/power/supply/offmode_charger/* drivers/power/supply/offmode_charger
+            cp -r omc/src/include/linux/offmode_charger.h include/linux
+            patch -p1 < omc/patches/0001-power-supply-wire-offmode-charger.patch 
           fi
       - name: Build Kernel
         run: |
