@@ -59,17 +59,18 @@ jobs:
           if [[ "${{ inputs.t6xmain }}" == "true" ]]; then
             git clone https://github.com/liuweien339-sys/android_kernel_oneplus_mt6878.git --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x mt6878            
             git clone https://github.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_mt6878 --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x modules
-            cp -r ${GITHUB_WORKSPACE}/modules/vendor ${GITHUB_WORKSPACE}/ 
-            cp -r ${GITHUB_WORKSPACE}/modules/kernel ${GITHUB_WORKSPACE}/
           fi
           
           if [[ "${{ inputs.t6x }}" == "true" ]]; then
             git clone https://github.com/TheWeienKernelProject/android_WeienKernel_oneplus_mt6878.git --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x mt6878
             git clone https://github.com/TheWeienKernelProject/android_WeienKernel_modules_and_devicetree_oneplus_mt6878 --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x modules
-            cp -r ${GITHUB_WORKSPACE}/modules/vendor ${GITHUB_WORKSPACE}/ 
-            cp -r ${GITHUB_WORKSPACE}/modules/kernel ${GITHUB_WORKSPACE}/
           fi
           
+          if [[ "${{ inputs.gauguin }}" != "true" ]]; then
+          cp -r ${GITHUB_WORKSPACE}/modules/vendor ${GITHUB_WORKSPACE}/ 
+          cp -r ${GITHUB_WORKSPACE}/modules/kernel ${GITHUB_WORKSPACE}/
+          else
+          fi
       - name: Download Clang Toolchain
         run: |
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
@@ -91,6 +92,7 @@ jobs:
           fi
           if [[ "${{ inputs.t6x }}" != "true" ]]; then
           curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s main  
+          else
           fi
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
             sed -i '171s/error/warning/g' drivers/kernelsu/Kbuild
