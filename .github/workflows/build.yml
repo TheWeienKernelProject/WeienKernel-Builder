@@ -89,7 +89,9 @@ jobs:
           else
             cd mt6878
           fi
+          if [[ "${{ inputs.t6x }}" != "true" ]]; then
           curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s main  
+          fi
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
             sed -i '171s/error/warning/g' drivers/kernelsu/Kbuild
             sed -i '82s/-dirty//g' drivers/kernelsu/Kbuild
