@@ -175,10 +175,18 @@ jobs:
             zip -r9 ../"${ZIP_NAME}.zip" * -x .git
             
       - name: Upload to GitHub Actions Artifacts
-        uses: actions/upload-artifact@v7
-        with:
-         name: Kernel
-         path: |
-          ak3/*
-         if-no-files-found: error
-         compression-level: 6
+        run: |
+          if [[ "${{ inputs.gauguin }}" == "true" ]]; then
+          device="gauguin-los24-normal"
+          elif [[ "${{ inputs.t6x }}" == "true" ]]; then
+          device="turbo6x-c16-main"
+          elif [[ "${{ inputs.t6xmain }}" == "true" ]]; then
+          device="turbo6x-c16-susfs"
+          fi
+           uses: actions/upload-artifact@v7
+           with:
+           name: "$device"-Kernel
+           path: |
+              ak3/*
+           if-no-files-found: error
+           compression-level: 7
