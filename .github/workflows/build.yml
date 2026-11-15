@@ -97,8 +97,19 @@ jobs:
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
             sed -i '171s/error/warning/g' drivers/kernelsu/Kbuild
             sed -i '82s/-dirty//g' drivers/kernelsu/Kbuild
-            curl -Lo susfs.patch https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/susfs_patch_to_5.4.patch || exit 1
-            curl -Lo inline.sh https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh || exit 1
+
+            clear
+            echo "========="
+            echo "注意!!!"
+            echo "WeienKernel已暂时放弃对gauguin的完全维护 所以此处的susfs补丁出现失败的情况很正常"
+            echo "所以我们不保证编译一定通过"
+            echo "========="
+            echo "Workflow将会在10秒后继续"
+            echo "========="
+            sleep 10
+            
+            curl -Lo susfs.patch https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/Patch/susfs_patch_to_5.4.patch || true
+            curl -Lo inline.sh https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh || true
             patch -p1 < susfs.patch
             bash inline.sh       
             cd ${GITHUB_WORKSPACE}/
