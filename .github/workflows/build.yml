@@ -161,6 +161,7 @@ jobs:
           fi
           
              make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
+             
       - name: Make AnyKernel3
         run: |
             ZIP_NAME="BuildSummary"
@@ -174,7 +175,18 @@ jobs:
             cd ak3 
             zip -r9 ../"${ZIP_NAME}.zip" * -x .git
             
-      - name: Upload to GitHub Actions Artifacts
+      - name: Upload Buildlog
+        run: |
+           if: always()
+           uses: actions/upload-artifact@v7
+           with:
+           name: Buildlog
+           path: |
+             build.log
+           if-no-files-found: warning
+           compression-level: 2
+
+      - name: Upload Kernel Image
         run: |
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
           device="gauguin-los24-normal"
@@ -190,3 +202,6 @@ jobs:
               ak3/*
            if-no-files-found: error
            compression-level: 7
+      - name: Build Summary
+        run: |
+          echo "未开发完成"
