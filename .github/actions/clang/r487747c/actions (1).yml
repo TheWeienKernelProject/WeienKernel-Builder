@@ -1,0 +1,14 @@
+name: "Download Clang-r487747c"
+ runs:
+  steps:
+    - name: Download AOSP Clang
+      run: |
+           curl -LO https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-qpr3-release/clang-r487747c.
+      
+    - name: make dir for clang unzip
+      run: |
+           mkdir -p toolchains/clang-r487747c
+           
+    - name: Unzip Clang   
+      run: |          
+           tar -xf "clang-r487747c.tar.gz" -C "toolchains/clang-r487747c"    

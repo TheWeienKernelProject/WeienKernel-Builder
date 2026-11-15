@@ -1,0 +1,78 @@
+name: WeienKernel Smart Build Workflow(Test)
+on:
+  workflow_dispatch:
+    inputs:
+       gauguin:
+         description: "构建gauguin内核 (不会测试) Compile-gauguin-kernel(non test)"
+         required: true
+         type: boolean
+         default: false
+        
+       t6xmain:
+         description: "构建PYS110内核(SuSFS分支) Compile-pys110-kernel(susfs branch)"
+         required: true
+         type: boolean
+         default: false
+        
+       t6x:
+         description: "构建PYS110内核(主线分支) Compile-pys110-kernel(main branch)"
+         required: true
+         type: boolean
+         default: false
+        
+jobs:
+  BuildKernel:
+    env:
+        GH_TOKEN: ${{ github.token }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+      checks: read
+    steps:
+      - uses: actions/checkout@v7
+      
+      - name: Setup SWAP
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 16
+          
+      - name: Install build dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+          libssl-dev \
+          libelf-dev \
+          libdw-dev \
+          build-essential \
+          dwarves \
+          gcc-aarch64-linux-gnu \
+          linux-tools-common 
+          
+      - name: Clone Kernel Source
+        run: |
+          if [[ "${{ inputs.gauguin }}" == "true" ]]; then
+            git clone https://github.com/TheWeienKernelProject/android_WeienKernel_xiaomi_gauguin.git gauguin --depth=1 -b lineage-24.0-new! kernel
+          fi
+          
+          if [[ "${{ inputs.t6xmain }}" == "true" ]]; then
+            git clone https://github.com/liuweien339-sys/android_kernel_oneplus_mt6878.git --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x kernel         
+            git clone https://github.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_mt6878 --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x modules
+          fi
+          
+          if [[ "${{ inputs.t6x }}" == "true" ]]; then
+            git clone https://github.com/TheWeienKernelProject/android_WeienKernel_oneplus_mt6878.git --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x kernel
+            git clone https://github.com/TheWeienKernelProject/android_WeienKernel_modules_and_devicetree_oneplus_mt6878 --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x modules
+          fi
+          
+          if [[ "${{ inputs.gauguin }}" != "true" ]]; then
+          uses: ./.github/actions/modules/copy/actions.yml
+          fi
+          
+      - name: Download Clang Toolchain
+        run: |
+             if [[ "${{ inputs.gauguin }}" != "true" ]]; then
+             uses: ./.github/actions/clang/r487747c.yml
+             else
+             uses: ./.github/actions/clang/r584948.yml
+             fi
