@@ -222,7 +222,7 @@ jobs:
       - name: Download AOSP Clang
         run: |
           # 由于Android14以前的qpr2版本使用的clang和qpr0一样 所以不予判断
-          elif [ "${{ inputs.android_version }}" == android10 ]; then
+          if [ "${{ inputs.android_version }}" == android10 ]; then
           curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983b.tar.gz
           elif [ "${{ inputs.android_version }}" == android11 ]; then
           curl -Lo clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android11-release/clang-r377782c.tar.gz
