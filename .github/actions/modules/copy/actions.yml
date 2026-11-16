@@ -1,7 +1,0 @@
-name: 'Copy module repo files'
- runs:
-  steps:
-    - name: Copy module repo file of good location
-      run: |
-           cp -r ${GITHUB_WORKSPACE}/modules/vendor ${GITHUB_WORKSPACE}/ 
-           cp -r ${GITHUB_WORKSPACE}/modules/kernel ${GITHUB_WORKSPACE}/
