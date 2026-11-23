@@ -69,8 +69,8 @@ jobs:
           if [[ "${{ inputs.gauguin }}" != "true" ]]; then
           cp -r ${GITHUB_WORKSPACE}/modules/vendor ${GITHUB_WORKSPACE}/ 
           cp -r ${GITHUB_WORKSPACE}/modules/kernel ${GITHUB_WORKSPACE}/
-          else
           fi
+          
       - name: Download Clang Toolchain
         run: |
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
