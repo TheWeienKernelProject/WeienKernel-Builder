@@ -93,7 +93,6 @@ jobs:
           if [[ "${{ inputs.t6x }}" != "true" ]]; then
           # curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s main  
           curl -LSs "https://raw.githubusercontent.com/SukiSU-Nova/SukiSU-Nova/main/kernel/setup.sh" | bash -s main
-          else
           fi
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
             sed -i '171s/error/warning/g' drivers/kernelsu/Kbuild
