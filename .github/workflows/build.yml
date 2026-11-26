@@ -188,16 +188,9 @@ jobs:
 
       - name: Upload Kernel Image
         run: |
-          if [[ "${{ inputs.gauguin }}" == "true" ]]; then
-          device="gauguin-los24-normal"
-          elif [[ "${{ inputs.t6x }}" == "true" ]]; then
-          device="turbo6x-c16-main"
-          elif [[ "${{ inputs.t6xmain }}" == "true" ]]; then
-          device="turbo6x-c16-susfs"
-          fi
            uses: actions/upload-artifact@v7
            with:
-           name: "$device"-Kernel
+           name: KernelSummary
            path: |
               ak3/*
            if-no-files-found: error
