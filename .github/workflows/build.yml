@@ -187,14 +187,13 @@ jobs:
             zip -r9 ../"${ZIP_NAME}.zip" * -x .git
 
       - name: Upload Kernel Image
-        run: |
-           uses: actions/upload-artifact@v7
-           with:
-           name: KernelSummary
-           path: |
-              ak3/*
-           if-no-files-found: error
-           compression-level: 7
+        uses: actions/upload-artifact@v7
+        with:
+          name: KernelSummary
+          path: |
+            ak3/*
+          if-no-files-found: error
+          compression-level: 7
            
       - name: Build Summary
         run: |
