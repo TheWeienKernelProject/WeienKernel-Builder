@@ -65,7 +65,7 @@ jobs:
 
       - name: Clone Kernel Source for gauguin
         if: inputs.gauguin == 'true'
-        uses: TheWeienKernelProject/android_WeienKernel_gauguin@lineage-24.0-new!
+        uses: TheWeienKernelProject/android_WeienKernel_xiaomi_gauguin@lineage-24.0-new!
         with:
           path: gauguin
           
