@@ -75,7 +75,7 @@ jobs:
         with:
           path: mt6878
 
-      - name: Clone Kernel Source for t6x
+      - name: Clone Kernel Source for t6xmain
         if: inputs.t6xmain == 'true'
         uses: liuweien339-sys/android_kernel_oneplus_mt6878@oneplus/mt6878_b_16.0_turbo_6x
         with:
