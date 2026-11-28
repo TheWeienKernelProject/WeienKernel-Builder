@@ -25,6 +25,7 @@ jobs:
   BuildKernel:
     env:
         GH_TOKEN: ${{ github.token }}
+        WS: ${{ github.workspace }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -81,8 +82,8 @@ jobs:
           fi
           
           if [[ "${{ inputs.gauguin }}" != "true" ]]; then
-          cp -r ${GITHUB_WORKSPACE}/modules/vendor ${GITHUB_WORKSPACE}/ 
-          cp -r ${GITHUB_WORKSPACE}/modules/kernel ${GITHUB_WORKSPACE}/
+          cp -r $WS/modules/vendor $WS/ 
+          cp -r $WS/modules/kernel $WS/
           fi
           
       - name: Download Clang Toolchain
@@ -125,36 +126,36 @@ jobs:
             curl -Lo inline.sh https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Build_2nd/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh || true
             patch -p1 < susfs.patch
             bash inline.sh       
-            cd ${GITHUB_WORKSPACE}/
+            cd $WS/
             git clone https://github.com/Sakion-Team/Re-Kernel/ -b main --depth=1
             git clone https://github.com/maxsteeel/nomount/ -b master --depth=1
-            mkdir ${GITHUB_WORKSPACE}/gauguin/fs/nomount
-            mkdir ${GITHUB_WORKSPACE}/gauguin/drivers/rekernel
-            cp ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/rekernel/* ${GITHUB_WORKSPACE}/gauguin/drivers/rekernel
-            cp ${GITHUB_WORKSPACE}/nomount/kernel/src/* ${GITHUB_WORKSPACE}/gauguin/fs/nomount
-            cd ${GITHUB_WORKSPACE}/gauguin/
-            bash ${GITHUB_WORKSPACE}/Re-Kernel/Integrate/patches.sh 
-            bash ${GITHUB_WORKSPACE}/nomount/kernel/setup.sh     
+            mkdir $WS/gauguin/fs/nomount
+            mkdir $WS/gauguin/drivers/rekernel
+            cp $WS/Re-Kernel/Integrate/rekernel/* $WS/gauguin/drivers/rekernel
+            cp $WS/nomount/kernel/src/* $WS/gauguin/fs/nomount
+            cd $WS/gauguin/
+            bash $WS/Re-Kernel/Integrate/patches.sh 
+            bash $WS/nomount/kernel/setup.sh     
           else
-            cd ${GITHUB_WORKSPACE}/mt6878
+            cd $WS/mt6878
             curl -Lo ds.patch https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/refs/heads/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch
             patch -p1 < ds.patch || true
 
-            cd ${GITHUB_WORKSPACE}
+            cd $WS
             git clone https://github.com/maxsteeel/nomount/ -b master --depth=1
-            mkdir ${GITHUB_WORKSPACE}/mt6878/fs/nomount
-            cp ${GITHUB_WORKSPACE}/nomount/kernel/src/* ${GITHUB_WORKSPACE}/mt6878/fs/nomount
-            cd ${GITHUB_WORKSPACE}/mt6878/
-            bash ${GITHUB_WORKSPACE}/nomount/kernel/setup.sh 
+            mkdir $WS/mt6878/fs/nomount
+            cp $WS/nomount/kernel/src/* $WS/mt6878/fs/nomount
+            cd $WS/mt6878/
+            bash $WS/nomount/kernel/setup.sh 
           fi
             
           if [[ "${{ inputs.t6xmain }}" == "true" ]]; then
             git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android14-6.1 --depth=1 susfs
             cd susfs
-            cp kernel_patches/50_add_susfs_in_gki-android14-6.1.patch ${GITHUB_WORKSPACE}/mt6878
-            cp kernel_patches/fs/* ${GITHUB_WORKSPACE}/mt6878/fs
-            cp kernel_patches/include/linux/* ${GITHUB_WORKSPACE}/mt6878/include/linux/
-            cd ${GITHUB_WORKSPACE}/mt6878
+            cp kernel_patches/50_add_susfs_in_gki-android14-6.1.patch $WS/mt6878
+            cp kernel_patches/fs/* $WS/mt6878/fs
+            cp kernel_patches/include/linux/* $WS/mt6878/include/linux/
+            cd $WS/mt6878
             # because kernel api issues 6.1.157 dont have (trace/hooks/blk.h) so delete some codeblock
             sed -i '642s/@@ -32,11 +32,21 @@/@@ -32,10 +32,20 @@/; 652d' 50_add_susfs_in_gki-android14-6.1.patch
             patch -p1 < 50_add_susfs_in_gki-android14-6.1.patch
@@ -164,9 +165,9 @@ jobs:
       - name: Build Kernel
         run: |
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
-            export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r584948/bin:$PATH"            
+            export PATH="$WS/toolchains/clang-r584948/bin:$PATH"            
           else
-            export PATH="${GITHUB_WORKSPACE}/toolchains/clang-r487747c/bin:$PATH"
+            export PATH="$WS/toolchains/clang-r487747c/bin:$PATH"
           fi
             export ARCH=arm64
             export SUBARCH=arm64
@@ -177,14 +178,14 @@ jobs:
             export KBUILD_BUILD_HOST="liuweien339-sys"
           
           if [[ "${{ inputs.gauguin }}" == "true" ]]; then
-             cd ${GITHUB_WORKSPACE}/gauguin
+             cd $WS/gauguin
              make vendor/lito-perf_defconfig vendor/xiaomi/gauguin.config vendor/addon.config
           else
-             cd ${GITHUB_WORKSPACE}/mt6878
+             cd $WS/mt6878
              make device_build_defconfig addon.config
           fi
           
-             make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
+             make -j$(nproc) Image 2>&1 | tee $WS/build.log
              
           if [[ "${{ inputs.gauguin }}" != "true" ]]; then
           mkdir outm
@@ -213,7 +214,3 @@ jobs:
             mt6878/outm/*
           if-no-files-found: error
           compression-level: 7
-           
-      - name: Build Summary
-        run: |
-          echo "未开发完成"
