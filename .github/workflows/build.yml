@@ -186,11 +186,6 @@ jobs:
           fi
           
              make -j$(nproc) Image 2>&1 | tee $WS/build.log
-             
-          if [[ "${{ inputs.gauguin }}" != "true" ]]; then
-          mkdir outm
-          make O=outm modules -j$(nproc)
-          fi
           
       - name: Make AnyKernel3
         run: |
@@ -211,6 +206,5 @@ jobs:
           name: BuildSummary
           path: |
             ak3/*
-            mt6878/outm/*
           if-no-files-found: error
           compression-level: 7
