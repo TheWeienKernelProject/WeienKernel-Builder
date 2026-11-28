@@ -50,6 +50,7 @@ jobs:
           echo "X Check Failed"
           echo "You can't selection more than one's on top area"
           exit 1
+          fi
           
       - name: Install build dep
         run: |
