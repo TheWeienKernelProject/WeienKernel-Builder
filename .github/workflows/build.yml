@@ -1,25 +1,29 @@
 name: WeienKernel Smart Build Workflow
 
 on:
-  workflow_dispatch:
-    inputs:
-       gauguin:
-         description: "构建gauguin内核 (不会测试) Compile-gauguin-kernel(non test)"
-         required: true
-         type: boolean
-         default: false
-        
-       t6xmain:
-         description: "构建PYS110内核(SuSFS分支) Compile-pys110-kernel(susfs branch)"
-         required: true
-         type: boolean
-         default: false
-        
-       t6x:
-         description: "构建PYS110内核(普通分支) Compile-pys110-kernel(normal branch)"
-         required: true
-         type: boolean
-         default: false
+  push:
+   branches:
+      - mainline 
+      
+  workflow_dispatch:   
+      inputs:
+          gauguin:
+           description: "构建gauguin内核 (不会测试) Compile-gauguin-kernel(non test)"
+           required: true
+           type: boolean
+           default: false
+         
+          t6xmain:
+           description: "构建PYS110内核(SuSFS分支) Compile-pys110-kernel(susfs branch)"
+           required: true
+           type: boolean
+           default: false
+ 
+          t6x:
+           description: "构建PYS110内核(普通分支) Compile-pys110-kernel(normal branch)"
+           required: true
+           type: boolean
+           default: false
         
 jobs:
   BuildKernel:
