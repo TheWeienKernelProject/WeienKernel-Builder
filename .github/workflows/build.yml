@@ -189,6 +189,7 @@ jobs:
           if [[ "${{ inputs.gauguin }}" != "true" ]]; then
           mkdir outm
           make O=outm modules -j$(nproc)
+          fi
           
       - name: Make AnyKernel3
         run: |
