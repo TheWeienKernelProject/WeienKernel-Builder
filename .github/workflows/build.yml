@@ -72,7 +72,8 @@ jobs:
           fi
           
           if [[ "${{ inputs.t6xmain }}" == "true" ]]; then
-            git clone https://github.com/liuweien339-sys/android_kernel_oneplus_mt6878.git --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x mt6878            
+            # git clone https://github.com/liuweien339-sys/android_kernel_oneplus_mt6878.git --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x mt6878       
+            git clone https://github.com/liuweien339-sys/android_kernel_oneplus_mt6878.git --depth=1 -b backport mt6878     
             git clone https://github.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_mt6878 --depth=1 -b oneplus/mt6878_b_16.0_turbo_6x modules
           fi
           
@@ -157,7 +158,7 @@ jobs:
             cp kernel_patches/include/linux/* $WS/mt6878/include/linux/
             cd $WS/mt6878
             # because kernel api issues 6.1.157 dont have (trace/hooks/blk.h) so delete some codeblock
-            sed -i '642s/@@ -32,11 +32,21 @@/@@ -32,10 +32,20 @@/; 652d' 50_add_susfs_in_gki-android14-6.1.patch
+            # sed -i '642s/@@ -32,11 +32,21 @@/@@ -32,10 +32,20 @@/; 652d' 50_add_susfs_in_gki-android14-6.1.patch
             patch -p1 < 50_add_susfs_in_gki-android14-6.1.patch
             sed -i '/^config LSM$/,/^help$/{ /^[[:space:]]*default/ { /baseband_guard/! s/selinux/selinux,baseband_guard/ } }' security/Kconfig
             wget -O- https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh | bash
