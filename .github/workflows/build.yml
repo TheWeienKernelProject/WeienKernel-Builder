@@ -1,10 +1,6 @@
 name: WeienKernel Smart Build Workflow
 
 on:
-  push:
-   branches:
-      - mainline 
-      
   workflow_dispatch:   
       inputs:
           gauguin:
