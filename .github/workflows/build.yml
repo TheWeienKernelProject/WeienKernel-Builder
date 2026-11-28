@@ -186,6 +186,10 @@ jobs:
           
              make -j$(nproc) Image 2>&1 | tee ${GITHUB_WORKSPACE}/build.log
              
+          if [[ "${{ inputs.gauguin }}" != "true" ]]; then
+          mkdir outm
+          make O=outm modules -j$(nproc)
+          
       - name: Make AnyKernel3
         run: |
             ZIP_NAME="BuildSummary"
@@ -199,12 +203,13 @@ jobs:
             cd ak3 
             zip -r9 ../"${ZIP_NAME}.zip" * -x .git
 
-      - name: Upload Kernel Image
+      - name: Upload Kernel Summary
         uses: actions/upload-artifact@v7
         with:
-          name: KernelSummary
+          name: BuildSummary
           path: |
             ak3/*
+            mt6878/outm/*
           if-no-files-found: error
           compression-level: 7
            
